@@ -1,17 +1,26 @@
 export const projects = [
   {
-    title: "Featured Project",
-    type: "Web App",
-    description: "Replace this with your strongest work and a short outcome-focused summary.",
+    title: "Signal Studio",
+    type: "Interactive Website",
+    description:
+      "A cinematic landing experience with motion-led storytelling, responsive layout, and a contact-first flow.",
+    stack: ["Next.js", "Motion", "Tailwind"],
+    accent: "cyan",
   },
   {
-    title: "Case Study",
-    type: "UI / UX",
-    description: "Use this space to explain the problem, your process, and the result.",
+    title: "Interface Gallery",
+    type: "Frontend System",
+    description:
+      "A polished component direction for clean navigation, crisp hierarchy, and reusable visual patterns.",
+    stack: ["React", "TypeScript", "Design Systems"],
+    accent: "magenta",
   },
   {
-    title: "Experiment",
-    type: "Prototype",
-    description: "Show the smaller builds, learning projects, or creative experiments you like.",
+    title: "Motion Lab",
+    type: "Creative Prototype",
+    description:
+      "A playground for scroll rhythm, hover feedback, and lightweight canvas experiments built for speed.",
+    stack: ["Three.js", "R3F", "CSS"],
+    accent: "amber",
   },
 ];

@@ -9,13 +9,24 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: "#121212",
-        paper: "#f7f3ea",
-        accent: "#2563eb",
+        night: "#080807",
+        ink: "#10100D",
+        bone: "#F5F4EF",
+        stone: "#A8A29A",
+        cyan: "#32E6E2",
+        magenta: "#FF4D8D",
+        amber: "#F2B84B",
       },
       fontFamily: {
         sans: ["var(--font-geist-sans)", "Arial", "sans-serif"],
         mono: ["var(--font-geist-mono)", "Consolas", "monospace"],
+        display: [
+          "Arial Narrow",
+          "Bahnschrift",
+          "var(--font-geist-sans)",
+          "Arial",
+          "sans-serif",
+        ],
       },
     },
   },

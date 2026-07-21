@@ -13,8 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Portfolio",
-  description: "A personal portfolio built with Next.js and Tailwind CSS.",
+  title: "Jericho Salvador | Creative Developer",
+  description:
+    "A cinematic creative developer portfolio built with Next.js, Motion, and Three.js.",
 };
 
 export default function RootLayout({

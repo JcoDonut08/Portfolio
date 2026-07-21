@@ -1,18 +1,29 @@
 import Link from "next/link";
 
-const navItems = ["Projects", "About", "Contact"];
+const navItems = [
+  { label: "Work", href: "#work" },
+  { label: "About", href: "#about" },
+  { label: "Contact", href: "#contact" },
+];
 
 export function SiteHeader() {
   return (
-    <header className="border-b border-neutral-900/10 bg-paper/80 backdrop-blur">
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-        <Link className="font-mono text-sm font-semibold uppercase tracking-[0.18em]" href="/">
+    <header className="sticky top-0 z-40 border-b border-white/10 bg-night/80 backdrop-blur-xl">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
+        <Link
+          className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-bone transition hover:text-cyan"
+          href="/"
+        >
           JcoDonut08
         </Link>
-        <div className="flex items-center gap-5 text-sm font-medium text-neutral-700">
+        <div className="flex items-center gap-3 text-sm font-medium text-stone sm:gap-6">
           {navItems.map((item) => (
-            <a className="transition hover:text-accent" href={`#${item.toLowerCase()}`} key={item}>
-              {item}
+            <a
+              className="rounded-full px-2 py-1 transition hover:text-bone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan"
+              href={item.href}
+              key={item.label}
+            >
+              {item.label}
             </a>
           ))}
         </div>

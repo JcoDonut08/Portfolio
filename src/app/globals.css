@@ -3,9 +3,17 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: light;
-  background: #f7f3ea;
-  color: #121212;
+  color-scheme: dark;
+  --night: #080807;
+  --ink: #10100d;
+  --bone: #f5f4ef;
+  --stone: #a8a29a;
+  --cyan: #32e6e2;
+  --magenta: #ff4d8d;
+  --amber: #f2b84b;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  background: var(--night);
+  color: var(--bone);
 }
 
 * {
@@ -19,13 +27,74 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
+  overflow-x: hidden;
   background:
-    radial-gradient(circle at top left, rgba(37, 99, 235, 0.14), transparent 30rem),
-    #f7f3ea;
-  color: #121212;
+    radial-gradient(circle at 20% 10%, rgba(50, 230, 226, 0.16), transparent 28rem),
+    radial-gradient(circle at 80% 0%, rgba(255, 77, 141, 0.12), transparent 26rem),
+    linear-gradient(180deg, #080807 0%, #10100d 58%, #080807 100%);
+  color: var(--bone);
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+::selection {
+  background: rgba(50, 230, 226, 0.28);
+  color: var(--bone);
+}
+
+:focus-visible {
+  outline-color: var(--cyan);
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+.noise-layer {
+  background-image:
+    radial-gradient(circle at center, rgba(245, 244, 239, 0.12) 0 1px, transparent 1px);
+  background-size: 3px 3px;
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+.scanline {
+  animation: scanline 5s var(--ease-out-expo) infinite;
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-120%);
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.7;
+  }
+  55% {
+    opacity: 0.15;
+  }
+  100% {
+    transform: translateY(120%);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }
