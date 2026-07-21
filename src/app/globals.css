@@ -68,7 +68,7 @@ p {
 }
 
 .scanline {
-  animation: scanline 5s var(--ease-out-expo) infinite;
+  animation: scanline 3.8s var(--ease-out-expo) infinite;
 }
 
 @keyframes scanline {
