@@ -1,175 +1,171 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 
-const introLines = [
-  "A signal sharpens.",
-  "Ideas take shape.",
-  "Motion finds its rhythm.",
-  "Jericho / Creative Developer.",
+const progressDuration = 6200;
+const stepThresholds = [28, 49, 70];
+
+const statementLines = [
+  { words: ["Every", "great"], className: "splash-title-line-primary" },
+  { words: ["future", "starts"], className: "splash-title-line-secondary" },
+  { words: ["with", "an", "idea."], className: "splash-title-line-accent" },
 ];
 
-const statusItems = ["signal", "interface", "motion"];
-const storageKey = "jericho-portfolio-intro-played";
+const steps = [
+  "Loading vision",
+  "Loading creativity",
+  "Loading innovation",
+];
 
-export function OpeningSequence() {
-  const prefersReducedMotion = useReducedMotion();
-  const [isReady, setIsReady] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
+type OpeningSequenceProps = {
+  onComplete?: () => void;
+};
 
-  const dismiss = useCallback(() => {
-    try {
-      window.sessionStorage.setItem(storageKey, "true");
-    } catch {
-      // Session storage can be unavailable in strict browser modes.
+export function OpeningSequence({ onComplete }: OpeningSequenceProps) {
+  const [progress, setProgress] = useState(0);
+  const [hasMounted, setHasMounted] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [isIgnited, setIsIgnited] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const reduceMotion = mediaQuery.matches;
+    setPrefersReducedMotion(reduceMotion);
+
+    if (reduceMotion) {
+      setProgress(100);
+      return;
     }
 
-    setIsVisible(false);
+    const startedAt = performance.now();
+    const timer = window.setInterval(() => {
+      const elapsed = performance.now() - startedAt;
+      const nextProgress = Math.min(100, (elapsed / progressDuration) * 100);
+
+      setProgress(nextProgress);
+
+      if (nextProgress >= 100) {
+        window.clearInterval(timer);
+      }
+    }, 50);
+
+    const finishTimer = window.setTimeout(() => setProgress(100), progressDuration + 100);
+
+    return () => {
+      window.clearInterval(timer);
+      window.clearTimeout(finishTimer);
+    };
   }, []);
 
   useEffect(() => {
-    if (prefersReducedMotion) {
-      setIsReady(true);
+    if (!isIgnited || !onComplete) {
       return;
     }
 
-    let hasPlayed = false;
+    const exitTimer = window.setTimeout(() => setIsExiting(true), prefersReducedMotion ? 0 : 420);
+    const completeTimer = window.setTimeout(onComplete, prefersReducedMotion ? 20 : 1120);
 
-    try {
-      hasPlayed = window.sessionStorage.getItem(storageKey) === "true";
-    } catch {
-      hasPlayed = false;
+    return () => {
+      window.clearTimeout(exitTimer);
+      window.clearTimeout(completeTimer);
+    };
+  }, [isIgnited, onComplete, prefersReducedMotion]);
+
+  const percentage = Math.round(progress);
+  const isInitializing = progress >= 10;
+  const isReady = progress >= 100;
+  const enterExperience = () => {
+    if (isReady && !isIgnited) {
+      setIsIgnited(true);
     }
-
-    setIsReady(true);
-
-    if (hasPlayed) {
-      return;
-    }
-
-    setIsVisible(true);
-    const timer = window.setTimeout(dismiss, 4200);
-
-    return () => window.clearTimeout(timer);
-  }, [dismiss, prefersReducedMotion]);
-
-  if (!isReady) {
-    return null;
-  }
+  };
 
   return (
-    <AnimatePresence>
-      {isVisible ? (
-        <motion.div
-          animate={{ opacity: 1 }}
-          className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-night px-6"
-          exit={{ opacity: 0, scale: 1.04, filter: "blur(14px)" }}
-          initial={{ opacity: 1 }}
-          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+    <main
+      aria-labelledby="splash-statement"
+      className={`splash-screen splash-title-sequence${hasMounted ? " is-mounted" : ""}${
+        prefersReducedMotion ? " prefers-reduced-motion" : ""
+      }${isReady ? " is-ready" : ""}${isIgnited ? " is-ignited" : ""}${isExiting ? " is-exiting" : ""}`}
+    >
+      <div aria-hidden="true" className="splash-light-leak" />
+      <div aria-hidden="true" className="splash-light-sweep" />
+      <div aria-hidden="true" className="splash-transition-ripple" />
+
+      <section className="splash-stage">
+        <h1
+          aria-label="Every great future starts with an idea."
+          className="splash-title"
+          id="splash-statement"
         >
-          <div className="noise-layer absolute inset-0" />
-          <motion.div
-            animate={{
-              opacity: [0.1, 0.34, 0.2],
-              scale: [0.8, 1.16, 1],
-              x: ["-10%", "4%", "0%"],
-            }}
-            className="absolute left-[-18rem] top-[-14rem] h-[36rem] w-[36rem] rounded-full bg-cyan/30 blur-3xl"
-            transition={{ duration: 3.6, ease: [0.16, 1, 0.3, 1] }}
-          />
-          <motion.div
-            animate={{
-              opacity: [0.06, 0.28, 0.18],
-              scale: [0.9, 1.2, 1.05],
-              x: ["8%", "-5%", "0%"],
-            }}
-            className="absolute bottom-[-18rem] right-[-16rem] h-[38rem] w-[38rem] rounded-full bg-magenta/28 blur-3xl"
-            transition={{ delay: 0.28, duration: 3.4, ease: [0.16, 1, 0.3, 1] }}
-          />
-          <motion.div
-            animate={{ rotate: 180, scale: [0.86, 1.04, 0.98], opacity: [0, 0.42, 0.2] }}
-            className="absolute h-[min(82vw,34rem)] w-[min(82vw,34rem)] rounded-full border border-cyan/25"
-            transition={{ duration: 3.8, ease: [0.16, 1, 0.3, 1] }}
-          />
-          <motion.div
-            animate={{ rotate: -150, scale: [1.08, 0.92, 1.02], opacity: [0, 0.3, 0.18] }}
-            className="absolute h-[min(95vw,42rem)] w-[min(95vw,42rem)] rounded-full border border-amber/25"
-            transition={{ delay: 0.18, duration: 3.7, ease: [0.16, 1, 0.3, 1] }}
-          />
-          <motion.div
-            animate={{ scaleX: [0, 1, 0.82, 0.24], opacity: [0, 1, 0.7, 0.28] }}
-            className="absolute h-px w-[min(42rem,84vw)] bg-cyan"
-            transition={{ duration: 3.35, ease: [0.16, 1, 0.3, 1] }}
-          />
-          <div className="relative flex w-full max-w-[min(44rem,calc(100vw-3rem))] flex-col gap-4 sm:gap-5">
-            {introLines.map((line, index) => (
-              <motion.p
-                animate={{
-                  filter: "blur(0px)",
-                  opacity: index === introLines.length - 1 ? 1 : 0.66,
-                  x: 0,
-                }}
-                className="max-w-full whitespace-normal break-words font-display text-[clamp(1.15rem,5vw,5.2rem)] font-semibold uppercase leading-[1.05] tracking-normal text-bone sm:leading-[0.92]"
-                initial={{ filter: "blur(14px)", opacity: 0, x: -38 }}
-                key={line}
-                transition={{
-                  delay: 0.34 + index * 0.46,
-                  duration: 0.78,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-              >
-                {line}
-              </motion.p>
-            ))}
-            <motion.div
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-2 grid max-w-md grid-cols-3 gap-2 font-mono text-[0.62rem] uppercase tracking-[0.14em] text-stone sm:text-xs"
-              initial={{ opacity: 0, y: 16 }}
-              transition={{ delay: 2.25, duration: 0.58, ease: [0.16, 1, 0.3, 1] }}
+          {statementLines.map((line, lineIndex) => (
+            <span
+              aria-hidden="true"
+              className={`splash-title-line ${line.className}`}
+              key={line.className}
+              style={{ "--line-delay": `${lineIndex * 280}ms` } as CSSProperties}
             >
-              {statusItems.map((item, index) => (
-                <span className="border border-white/15 px-2 py-2 text-center" key={item}>
-                  <motion.span
-                    animate={{ opacity: [0.35, 1, 0.55] }}
-                    className="mr-1 inline-block text-cyan"
-                    transition={{
-                      delay: 2.35 + index * 0.18,
-                      duration: 0.9,
-                      ease: [0.16, 1, 0.3, 1],
-                    }}
-                  >
-                    +
-                  </motion.span>
-                  {item}
+              {line.words.map((word, wordIndex) => (
+                <span
+                  className="splash-title-word"
+                  key={word}
+                  style={{ "--word-delay": `${wordIndex * 120}ms` } as CSSProperties}
+                >
+                  {word}
                 </span>
               ))}
-            </motion.div>
-          </div>
-          <div className="absolute inset-x-5 bottom-6 max-w-md sm:left-6 sm:right-auto">
-            <div className="mb-2 flex items-center justify-between font-mono text-[0.62rem] uppercase tracking-[0.16em] text-stone">
-              <span>Opening signal</span>
-              <span>4.0s</span>
-            </div>
-            <div className="h-px overflow-hidden bg-white/15">
-              <motion.div
-                animate={{ scaleX: 1 }}
-                className="h-full origin-left bg-cyan"
-                initial={{ scaleX: 0 }}
-                transition={{ duration: 3.9, ease: "linear" }}
-              />
-            </div>
-          </div>
-          <button
-            className="absolute right-5 top-5 rounded-full border border-white/20 px-3 py-2 font-mono text-[0.65rem] uppercase tracking-[0.12em] text-stone transition hover:border-cyan hover:text-bone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan sm:right-6 sm:top-6 sm:px-4 sm:text-xs sm:tracking-[0.14em]"
-            onClick={dismiss}
-            type="button"
-          >
-            Skip intro
-          </button>
-          <div className="scanline absolute left-0 top-0 h-24 w-full bg-gradient-to-b from-transparent via-cyan/20 to-transparent blur-sm" />
-        </motion.div>
-      ) : null}
-    </AnimatePresence>
+            </span>
+          ))}
+        </h1>
+
+        <div className={`splash-process${isInitializing ? " is-active" : ""}`}>
+          <p className="splash-process-label">Initializing experience…</p>
+          <ul aria-label="Experience loading steps" aria-live="polite" className="splash-process-list">
+            {steps.map((step, index) => {
+              const isDone = progress >= stepThresholds[index];
+
+              return (
+                <li className={`splash-process-item${isDone ? " is-done" : ""}`} key={step}>
+                  <span aria-hidden="true" className="splash-process-mark">
+                    {isDone ? "✓" : "—"}
+                  </span>
+                  <span>{step}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </section>
+
+      <footer className="splash-footer">
+        <div className="splash-footer-meta">
+          <span className="splash-progress-status">{isReady ? "System ready" : "Building the signal"}</span>
+          <span className="splash-progress-percent">{percentage}%</span>
+        </div>
+      </footer>
+
+      <div
+        aria-label="Experience loading progress"
+        aria-valuemax={100}
+        aria-valuemin={0}
+        aria-valuenow={percentage}
+        className="splash-progress-track"
+        role="progressbar"
+      >
+        <span className="splash-progress-fill" style={{ transform: `scaleX(${progress / 100})` }} />
+      </div>
+
+      <button
+        aria-label="Enter Jericho Paul Salvador's portfolio"
+        className={`splash-arrival-ready${isReady ? " is-visible" : ""}`}
+        disabled={!isReady || isIgnited}
+        onClick={enterExperience}
+        type="button"
+      >
+        <span className="splash-arrival-title">Ready.</span>
+      </button>
+    </main>
   );
 }

@@ -1,5 +1,5 @@
-import { AnimatedHome } from "@/components/animated-home";
+import { PortfolioExperience } from "@/components/portfolio-experience";
 
 export default function Home() {
-  return <AnimatedHome />;
+  return <PortfolioExperience />;
 }
