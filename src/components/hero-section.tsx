@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type PointerEvent } from "react";
 import { PortfolioCard } from "@/components/portfolio-card";
+import { ZodiacField } from "@/components/zodiac-field";
 
 const roles = ["front-end developer", "UI/UX designer", "creative developer"];
 
@@ -32,58 +33,6 @@ function MailIcon() {
 type HeroSectionProps = {
   isActive: boolean;
 };
-
-function HeroSignalField() {
-  return (
-    <div aria-hidden="true" className="hero-signal-field">
-      <div className="hero-signal-scene">
-        <span className="hero-signal-bloom" />
-        <svg
-          className="hero-signal-orbits"
-          preserveAspectRatio="xMidYMid slice"
-          viewBox="0 0 1400 900"
-        >
-          <ellipse
-            className="hero-signal-orbit hero-signal-orbit-primary"
-            cx="720"
-            cy="470"
-            pathLength="100"
-            rx="620"
-            ry="270"
-            transform="rotate(-12 720 470)"
-          />
-          <ellipse
-            className="hero-signal-pulse hero-signal-pulse-primary"
-            cx="720"
-            cy="470"
-            pathLength="100"
-            rx="620"
-            ry="270"
-            transform="rotate(-12 720 470)"
-          />
-          <ellipse
-            className="hero-signal-orbit hero-signal-orbit-secondary"
-            cx="820"
-            cy="455"
-            pathLength="100"
-            rx="500"
-            ry="340"
-            transform="rotate(18 820 455)"
-          />
-          <ellipse
-            className="hero-signal-pulse hero-signal-pulse-secondary"
-            cx="820"
-            cy="455"
-            pathLength="100"
-            rx="500"
-            ry="340"
-            transform="rotate(18 820 455)"
-          />
-        </svg>
-      </div>
-    </div>
-  );
-}
 
 export function HeroSection({ isActive }: HeroSectionProps) {
   const [roleIndex, setRoleIndex] = useState(0);
@@ -141,7 +90,7 @@ export function HeroSection({ isActive }: HeroSectionProps) {
       onPointerLeave={resetSignalPosition}
       onPointerMove={handleSignalPointerMove}
     >
-      <HeroSignalField />
+      <ZodiacField isActive={isActive} />
 
       <header className="hero-nav">
         <div className="hero-brand">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type CSSProperties } from "react";
+import { ZodiacField } from "@/components/zodiac-field";
 
 const progressDuration = 6200;
 const stepThresholds = [28, 49, 70];
@@ -90,6 +91,7 @@ export function OpeningSequence({ onComplete }: OpeningSequenceProps) {
         prefersReducedMotion ? " prefers-reduced-motion" : ""
       }${isReady ? " is-ready" : ""}${isIgnited ? " is-ignited" : ""}${isExiting ? " is-exiting" : ""}`}
     >
+      <ZodiacField isActive={hasMounted} variant="splash" />
       <div aria-hidden="true" className="splash-light-leak" />
       <div aria-hidden="true" className="splash-light-sweep" />
       <div aria-hidden="true" className="splash-transition-ripple" />

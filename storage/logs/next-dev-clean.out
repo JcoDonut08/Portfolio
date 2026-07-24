@@ -30,3 +30,16 @@
  ○ Compiling /_not-found ...
  ✓ Compiled /_not-found in 667ms (584 modules)
  GET / 404 in 1066ms
+ ✓ Compiled in 1087ms (257 modules)
+ ✓ Compiled in 509ms (257 modules)
+ ✓ Compiled in 605ms (257 modules)
+ ✓ Compiled / in 238ms (338 modules)
+ GET / 200 in 656ms
+ GET / 200 in 234ms
+ GET / 200 in 264ms
+ GET / 200 in 235ms
+ GET / 200 in 227ms
+ GET / 200 in 282ms
+ ✓ Compiled in 1266ms (595 modules)
+ GET / 200 in 491ms
+ ✓ Compiled in 5s (595 modules)

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Portfolio Frontend Standards"
+  short_description: "Build responsive, reusable portfolio interfaces"
+  default_prompt: "Use $portfolio-frontend-standards to implement this portfolio UI responsively with reusable components and production checks."

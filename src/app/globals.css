@@ -3934,3 +3934,488 @@ a.hero-social-link:hover {
     transition: none;
   }
 }
+
+/* Celestial art direction: a restrained observatory sky built from real zodiac geometry. */
+:root {
+  --night: #050713;
+  --bone: #f5f7ff;
+  --stone: #aab3d0;
+  --electric-blue: #648cff;
+  --electric-blue-bright: #8facff;
+  --electric-blue-soft: #d7e0ff;
+  --electric-blue-deep: #0b1024;
+  --starlight-warm: #d8b06a;
+}
+
+body,
+.portfolio-experience {
+  background: #050713;
+}
+
+body {
+  background:
+    radial-gradient(circle at 72% 38%, rgba(56, 84, 174, 0.12), transparent 34rem),
+    linear-gradient(180deg, #050713 0%, #080c1d 58%, #050713 100%);
+}
+
+::selection {
+  background: rgba(100, 140, 255, 0.34);
+  color: #ffffff;
+}
+
+:focus-visible {
+  outline-color: #8facff;
+}
+
+.hero-section {
+  --hero-bg: #050713;
+  --hero-ink: #f5f7ff;
+  --hero-muted: #aab3d0;
+  --hero-line: rgba(191, 204, 255, 0.14);
+  --hero-blue: #648cff;
+  background:
+    radial-gradient(circle at 74% 44%, rgba(72, 105, 211, 0.12), transparent 28rem),
+    radial-gradient(circle at 22% 105%, rgba(30, 49, 108, 0.16), transparent 34rem),
+    #050713;
+}
+
+.hero-section::before {
+  position: absolute;
+  right: -24rem;
+  bottom: -54rem;
+  z-index: 0;
+  display: block;
+  width: min(92rem, 112vw);
+  aspect-ratio: 1;
+  border: 1px solid rgba(146, 170, 255, 0.2);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 43% 37%, rgba(93, 126, 232, 0.12), transparent 21%),
+    radial-gradient(circle at 50% 48%, #0b1024 0%, #070a18 51%, #03040a 70%);
+  box-shadow:
+    inset 0 0 5rem rgba(100, 140, 255, 0.08),
+    0 -1px 2rem rgba(100, 140, 255, 0.08);
+  content: "";
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.zodiac-field {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  contain: paint;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(var(--hero-signal-x, 0), var(--hero-signal-y, 0), 0);
+  transition:
+    opacity 1.2s ease,
+    transform 700ms var(--ease-out-expo);
+}
+
+.zodiac-field.is-active {
+  opacity: 1;
+}
+
+.zodiac-sky {
+  position: absolute;
+  inset: -3%;
+  width: 106%;
+  height: 106%;
+  overflow: visible;
+  transform-origin: center;
+  animation: zodiac-sky-drift 28s ease-in-out infinite alternate;
+}
+
+.zodiac-nebula {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(5rem);
+  opacity: 0.15;
+}
+
+.zodiac-nebula-primary {
+  top: 20%;
+  left: 48%;
+  width: min(52rem, 62vw);
+  aspect-ratio: 1.7;
+  background: #345cbe;
+  transform: rotate(-18deg);
+}
+
+.zodiac-nebula-secondary {
+  right: 4%;
+  bottom: -7%;
+  width: min(32rem, 42vw);
+  aspect-ratio: 1;
+  background: #173273;
+  opacity: 0.11;
+}
+
+.zodiac-chart ellipse,
+.zodiac-chart path {
+  fill: none;
+  stroke: rgba(132, 158, 246, 0.12);
+  stroke-width: 0.8;
+  vector-effect: non-scaling-stroke;
+}
+
+.zodiac-chart ellipse:first-child {
+  stroke: rgba(150, 174, 255, 0.17);
+}
+
+.zodiac-chart-dashed {
+  stroke-dasharray: 2 12;
+}
+
+.zodiac-ambient-stars {
+  animation: zodiac-stars-breathe 10s ease-in-out infinite alternate;
+}
+
+.zodiac-constellation {
+  opacity: 0.58;
+}
+
+.zodiac-line {
+  fill: none;
+  stroke: rgba(126, 158, 255, 0.72);
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 0.85;
+  vector-effect: non-scaling-stroke;
+}
+
+.is-active .zodiac-line {
+  animation: zodiac-line-arrival 1.8s var(--ease-out-expo) forwards;
+  animation-delay: calc(380ms + var(--zodiac-delay));
+}
+
+.zodiac-star {
+  fill: #f5f7ff;
+  filter: drop-shadow(0 0 3px rgba(133, 165, 255, 0.9));
+  opacity: 0;
+}
+
+.zodiac-star-halo {
+  opacity: 0;
+}
+
+.is-active .zodiac-star {
+  animation: zodiac-star-arrival 900ms ease forwards;
+  animation-delay: calc(720ms + var(--zodiac-delay));
+}
+
+.is-active .zodiac-star-halo {
+  animation: zodiac-halo-arrival 1.2s ease forwards;
+  animation-delay: calc(820ms + var(--zodiac-delay));
+}
+
+.zodiac-field--splash {
+  z-index: -1;
+  opacity: 0;
+}
+
+.zodiac-field--splash.is-active {
+  opacity: 0.62;
+}
+
+.zodiac-field--splash .zodiac-constellation {
+  opacity: 0.44;
+}
+
+.zodiac-field--splash .zodiac-chart ellipse,
+.zodiac-field--splash .zodiac-chart path {
+  stroke-opacity: 0.66;
+}
+
+.splash-title-sequence {
+  --title-night: #050713;
+  --title-white: #f5f7ff;
+  --title-muted: #aab3d0;
+  --title-blue: #648cff;
+  background:
+    radial-gradient(circle at 54% 43%, rgba(54, 84, 179, 0.13), transparent 34%),
+    #050713;
+}
+
+.splash-light-leak {
+  background: linear-gradient(
+    106deg,
+    transparent 41%,
+    rgba(100, 140, 255, 0.06) 49%,
+    rgba(143, 172, 255, 0.1) 52%,
+    transparent 60%
+  );
+}
+
+.splash-light-sweep {
+  background: linear-gradient(90deg, transparent, rgba(100, 140, 255, 0.11), transparent);
+}
+
+.splash-progress-fill {
+  background: linear-gradient(90deg, #315fd2, #8facff);
+}
+
+.hero-nav {
+  border-bottom: 1px solid rgba(178, 194, 255, 0.1);
+}
+
+.hero-logo {
+  border-color: rgba(179, 196, 255, 0.72);
+  background: rgba(8, 13, 32, 0.72);
+  box-shadow: inset 0 0 1.2rem rgba(100, 140, 255, 0.08);
+}
+
+.hero-name,
+.hero-nav-links a {
+  color: #dce3fa;
+}
+
+.hero-intro {
+  color: #8facff;
+}
+
+.hero-copy h1,
+.hero-copy h1 span,
+.hero-copy h1 span:last-child {
+  color: #f5f7ff;
+  text-shadow: 0 0 2.4rem rgba(112, 145, 255, 0.08);
+}
+
+.hero-role {
+  color: #d2d9ef;
+}
+
+.hero-role-word {
+  color: #8facff;
+  text-shadow: 0 0 1.1rem rgba(100, 140, 255, 0.18);
+}
+
+.hero-summary {
+  color: #b8c1dc;
+}
+
+.hero-action-primary {
+  background: #648cff;
+  color: #050713;
+  box-shadow: 0 0 1.2rem rgba(100, 140, 255, 0.2);
+}
+
+.hero-action-primary:hover {
+  background: #8facff;
+  box-shadow: 0 0 1.6rem rgba(100, 140, 255, 0.3);
+}
+
+.hero-action-secondary {
+  border-color: rgba(143, 172, 255, 0.7);
+  background: rgba(5, 7, 19, 0.4);
+}
+
+.hero-card-wrap::before {
+  width: min(35rem, 116%);
+  border-color: rgba(126, 158, 255, 0.22);
+  box-shadow: 0 0 2.5rem rgba(64, 99, 205, 0.08);
+  transform: translate(-50%, -50%) scaleY(0.62) rotate(-22deg);
+}
+
+.portfolio-card {
+  filter: drop-shadow(0 1.4rem 1.5rem rgba(0, 0, 0, 0.38));
+}
+
+.portfolio-card::after {
+  inset: 1.45rem -1.1rem -1rem 1.1rem;
+  border-color: rgba(100, 140, 255, 0.44);
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 82% 16%, rgba(100, 140, 255, 0.18), transparent 32%),
+    #0b1024;
+}
+
+.portfolio-card-face {
+  border-color: rgba(139, 168, 255, 0.58);
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 76% 25%, rgba(78, 111, 216, 0.18), transparent 35%),
+    linear-gradient(160deg, #0b1024 0%, #070a18 72%);
+}
+
+.portfolio-card-front::before {
+  border-color: rgba(129, 158, 255, 0.13);
+}
+
+.portfolio-card-back {
+  background:
+    radial-gradient(circle at 92% 7%, rgba(100, 140, 255, 0.35), transparent 34%),
+    radial-gradient(circle at 9% 92%, rgba(49, 83, 182, 0.18), transparent 31%),
+    #080c1d;
+}
+
+.portfolio-card-mark {
+  border-color: #648cff;
+  background: rgba(100, 140, 255, 0.11);
+  color: #dce5ff;
+}
+
+.portfolio-card-year i {
+  background: #d8b06a;
+  box-shadow: 0 0 0.7rem rgba(216, 176, 106, 0.62);
+}
+
+.portfolio-card-photo {
+  border-color: rgba(126, 158, 255, 0.46);
+  border-radius: 10px;
+  background: #04060d;
+}
+
+.portfolio-card-photo img {
+  filter: saturate(1.03) contrast(1.06) brightness(1.08) sepia(0.04);
+}
+
+.portfolio-card:hover .portfolio-card-photo img {
+  filter: saturate(1.1) contrast(1.08) brightness(1.12) sepia(0.03);
+}
+
+.portfolio-card-photo::before {
+  background: rgba(216, 176, 106, 0.08);
+  opacity: 0.3;
+}
+
+.portfolio-card-discipline {
+  border-color: rgba(100, 140, 255, 0.64);
+  color: #cbd8ff;
+}
+
+.portfolio-card-summary,
+.portfolio-card-back-summary {
+  color: #bdc7e4;
+}
+
+.portfolio-card-front::after {
+  background: linear-gradient(
+    105deg,
+    transparent 4%,
+    rgba(211, 224, 255, 0.04) 28%,
+    rgba(129, 160, 255, 0.2) 50%,
+    rgba(226, 233, 255, 0.07) 72%,
+    transparent 96%
+  );
+}
+
+@keyframes zodiac-line-arrival {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes zodiac-star-arrival {
+  from {
+    opacity: 0;
+    transform: scale(0.45);
+  }
+  to {
+    opacity: 0.94;
+    transform: scale(1);
+  }
+}
+
+@keyframes zodiac-halo-arrival {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.42;
+  }
+}
+
+@keyframes zodiac-stars-breathe {
+  from {
+    opacity: 0.66;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes zodiac-sky-drift {
+  from {
+    transform: scale(1.01) rotate(-0.2deg);
+  }
+  to {
+    transform: scale(1.035) rotate(0.25deg);
+  }
+}
+
+@media (max-width: 900px) {
+  .zodiac-field--hero {
+    opacity: 0;
+  }
+
+  .zodiac-field--hero.is-active {
+    opacity: 0.62;
+  }
+
+  .zodiac-field--hero .zodiac-sky {
+    inset: -1%;
+    width: 102%;
+    height: 102%;
+  }
+
+  .zodiac-field--hero .zodiac-constellation {
+    opacity: 0.42;
+  }
+
+  .hero-section::before {
+    right: -32rem;
+    bottom: -45rem;
+    width: 72rem;
+    opacity: 0.42;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-nav {
+    border-bottom-color: rgba(178, 194, 255, 0.08);
+  }
+
+  .hero-section::before {
+    right: -28rem;
+    bottom: -36rem;
+    width: 58rem;
+  }
+
+  .zodiac-nebula-primary {
+    top: 28%;
+    left: 34%;
+    width: 32rem;
+  }
+
+  .zodiac-field--splash.is-active {
+    opacity: 0.46;
+  }
+
+  .portfolio-card {
+    filter: drop-shadow(0 0.8rem 0.8rem rgba(0, 0, 0, 0.32));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zodiac-sky,
+  .zodiac-ambient-stars,
+  .zodiac-line {
+    animation: none !important;
+    stroke-dashoffset: 0;
+  }
+
+  .zodiac-star {
+    animation: none !important;
+    opacity: 0.94;
+  }
+
+  .zodiac-star-halo {
+    animation: none !important;
+    opacity: 0.36;
+  }
+}
