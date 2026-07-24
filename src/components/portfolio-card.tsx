@@ -44,6 +44,8 @@ export function PortfolioCard({ imageSrc }: PortfolioCardProps) {
   const cardStyle = {
     "--portfolio-card-rotate-x": `${tilt.y}deg`,
     "--portfolio-card-rotate-y": `${tilt.x}deg`,
+    "--portfolio-card-stack-x": `${tilt.x * -0.075}rem`,
+    "--portfolio-card-stack-y": `${tilt.y * 0.075}rem`,
   } as CSSProperties;
 
   return (

@@ -1,0 +1,32 @@
+
+> portfolio@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.5.20
+   - Local:        http://localhost:3000
+   - Network:      http://172.30.128.1:3000
+
+ ✓ Starting...
+ ✓ Ready in 2.9s
+ ○ Compiling / ...
+ ✓ Compiled / in 5s (611 modules)
+ GET / 200 in 5897ms
+ ✓ Compiled in 1120ms (256 modules)
+ GET / 200 in 112ms
+ GET / 200 in 106ms
+ GET / 200 in 90ms
+ GET / 200 in 105ms
+ GET / 200 in 132ms
+ ✓ Compiled in 365ms (579 modules)
+ GET / 200 in 532ms
+ GET / 200 in 156ms
+ GET / 200 in 191ms
+ GET / 200 in 122ms
+ ✓ Compiled in 572ms (256 modules)
+ ✓ Compiled in 614ms (256 modules)
+ ✓ Compiled / in 132ms (337 modules)
+ GET / 200 in 755ms
+ GET / 200 in 103ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 667ms (584 modules)
+ GET / 404 in 1066ms
