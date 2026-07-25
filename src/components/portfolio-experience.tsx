@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AboutSection } from "@/components/about-section";
 import { EducationSection } from "@/components/education-section";
 import { HeroSection } from "@/components/hero-section";
 import { OpeningSequence } from "@/components/opening-sequence";
 import { SiteFooter } from "@/components/site-footer";
+import { SiteNavigation } from "@/components/site-navigation";
 import { ZodiacField } from "@/components/zodiac-field";
 import { useScrollReveals } from "@/hooks/use-scroll-reveals";
 
@@ -13,8 +14,40 @@ export function PortfolioExperience() {
   const [hasEntered, setHasEntered] = useState(false);
   useScrollReveals(hasEntered);
 
+  useEffect(() => {
+    if (hasEntered) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [hasEntered]);
+
+  const enterExperience = () => {
+    const root = document.documentElement;
+    const previousScrollBehavior = root.style.scrollBehavior;
+
+    root.style.scrollBehavior = "auto";
+    window.history.replaceState(
+      window.history.state,
+      "",
+      `${window.location.pathname}${window.location.search}`,
+    );
+    window.scrollTo(0, 0);
+    setHasEntered(true);
+
+    window.requestAnimationFrame(() => {
+      root.style.scrollBehavior = previousScrollBehavior;
+    });
+  };
+
   return (
     <main className="portfolio-experience">
+      <SiteNavigation isActive={hasEntered} />
       <div aria-hidden="true" className="portfolio-backdrop">
         <ZodiacField isActive={hasEntered} />
         <span className="portfolio-backdrop-planet" />
@@ -27,7 +60,7 @@ export function PortfolioExperience() {
       <AboutSection />
       <EducationSection />
       <SiteFooter />
-      {hasEntered ? null : <OpeningSequence onComplete={() => setHasEntered(true)} />}
+      {hasEntered ? null : <OpeningSequence onComplete={enterExperience} />}
     </main>
   );
 }

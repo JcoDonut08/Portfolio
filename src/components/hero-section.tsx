@@ -89,24 +89,6 @@ export function HeroSection({ isActive }: HeroSectionProps) {
       onPointerLeave={resetSignalPosition}
       onPointerMove={handleSignalPointerMove}
     >
-      <header className="hero-nav">
-        <div className="hero-brand">
-          <a aria-label="Jericho Paul Salvador — home" className="hero-logo" href="#home">
-            JPS
-          </a>
-          <a className="hero-name" href="#home">
-            Jericho Paul Salvador
-          </a>
-        </div>
-        <nav aria-label="Primary navigation" className="hero-nav-links">
-          <a href="#about">About</a>
-          <a href="#education">Education</a>
-          <a download href="/assets/resume/Jericho-Salvador-Resume.pdf">
-            Résumé
-          </a>
-        </nav>
-      </header>
-
       <div className="hero-grid">
         <div className="hero-copy">
           <p className="hero-intro">Hello, I&apos;m</p>
