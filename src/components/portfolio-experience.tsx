@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { AboutSection } from "@/components/about-section";
+import { EducationSection } from "@/components/education-section";
 import { HeroSection } from "@/components/hero-section";
 import { OpeningSequence } from "@/components/opening-sequence";
 import { SiteFooter } from "@/components/site-footer";
@@ -24,6 +25,7 @@ export function PortfolioExperience() {
       </div>
       <HeroSection isActive={hasEntered} />
       <AboutSection />
+      <EducationSection />
       <SiteFooter />
       {hasEntered ? null : <OpeningSequence onComplete={() => setHasEntered(true)} />}
     </main>
