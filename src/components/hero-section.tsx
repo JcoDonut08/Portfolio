@@ -2,7 +2,6 @@
 
 import { useEffect, useState, type PointerEvent } from "react";
 import { PortfolioCard } from "@/components/portfolio-card";
-import { ZodiacField } from "@/components/zodiac-field";
 
 const roles = ["front-end developer", "UI/UX designer", "creative developer"];
 
@@ -90,8 +89,6 @@ export function HeroSection({ isActive }: HeroSectionProps) {
       onPointerLeave={resetSignalPosition}
       onPointerMove={handleSignalPointerMove}
     >
-      <ZodiacField isActive={isActive} />
-
       <header className="hero-nav">
         <div className="hero-brand">
           <a aria-label="Jericho Paul Salvador — home" className="hero-logo" href="#home">
@@ -103,8 +100,9 @@ export function HeroSection({ isActive }: HeroSectionProps) {
         </div>
         <nav aria-label="Primary navigation" className="hero-nav-links">
           <a href="#about">About</a>
-          <a href="#projects">Work</a>
-          <a href="#contact">Contact</a>
+          <a download href="/assets/resume/Jericho-Salvador-Resume.pdf">
+            Résumé
+          </a>
         </nav>
       </header>
 
@@ -121,11 +119,15 @@ export function HeroSection({ isActive }: HeroSectionProps) {
             I build clear, expressive digital experiences where interface craft and motion do the talking.
           </p>
           <div className="hero-actions">
-            <a className="hero-action hero-action-primary" href="#contact">
-              Contact me <span aria-hidden="true">↗</span>
+            <a className="hero-action hero-action-primary" href="#about">
+              About me <span aria-hidden="true">↓</span>
             </a>
-            <a className="hero-action hero-action-secondary" href="#projects">
-              View projects
+            <a
+              className="hero-action hero-action-secondary"
+              download
+              href="/assets/resume/Jericho-Salvador-Resume.pdf"
+            >
+              Download résumé
             </a>
           </div>
           <div aria-label="Social links" className="hero-social-links">
@@ -148,7 +150,7 @@ export function HeroSection({ isActive }: HeroSectionProps) {
         </div>
 
         <div className="hero-card-wrap">
-          <PortfolioCard imageSrc="/assets/profile/jericho-paul-salvador.jfif" />
+          <PortfolioCard imageSrc="/assets/profile/jericho-paul-salvador-celestial.png" />
         </div>
       </div>
     </section>
