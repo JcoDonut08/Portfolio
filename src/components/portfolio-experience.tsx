@@ -7,6 +7,7 @@ import { HeroSection } from "@/components/hero-section";
 import { OpeningSequence } from "@/components/opening-sequence";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNavigation } from "@/components/site-navigation";
+import { SkillsSection } from "@/components/skills-section";
 import { ZodiacField } from "@/components/zodiac-field";
 import { useScrollReveals } from "@/hooks/use-scroll-reveals";
 
@@ -58,6 +59,7 @@ export function PortfolioExperience() {
       </div>
       <HeroSection isActive={hasEntered} />
       <AboutSection />
+      <SkillsSection />
       <EducationSection />
       <SiteFooter />
       {hasEntered ? null : <OpeningSequence onComplete={enterExperience} />}

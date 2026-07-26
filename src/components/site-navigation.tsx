@@ -34,8 +34,13 @@ export function SiteNavigation({ isActive }: SiteNavigationProps) {
       </div>
       <nav aria-label="Primary navigation" className="hero-nav-links">
         <a href="#about">About</a>
+        <a href="#skills">Skills</a>
         <a href="#education">Education</a>
-        <a download href="/assets/resume/Jericho-Salvador-Resume.pdf">
+        <a
+          className="site-nav-resume"
+          download
+          href="/assets/resume/Jericho-Salvador-Resume.pdf"
+        >
           Résumé
         </a>
       </nav>
