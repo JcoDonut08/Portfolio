@@ -1,28 +1,34 @@
 "use client";
 
-import type { FormEvent } from "react";
+import { useState, type FormEvent } from "react";
+
+import {
+  type ContactApiResponse,
+  contactCategories,
+  contactLimits,
+} from "@/lib/contact";
 
 type ContactInquiryFormProps = {
   recipientEmail: string;
 };
 
-const projectCategories = [
-  "Website development",
-  "UI/UX design",
-  "Portfolio or personal site",
-  "Collaboration",
-  "Other",
-] as const;
+type SubmissionStatus = "idle" | "submitting" | "success" | "error";
 
-function getFormValue(formData: FormData, fieldName: string) {
-  const value = formData.get(fieldName);
-  return typeof value === "string" ? value.trim() : "";
-}
+const submitButtonLabels: Record<SubmissionStatus, string> = {
+  idle: "Send message",
+  submitting: "Sending message…",
+  success: "Message sent",
+  error: "Try sending again",
+};
 
 export function ContactInquiryForm({
   recipientEmail,
 }: ContactInquiryFormProps) {
-  const prepareEmail = (event: FormEvent<HTMLFormElement>) => {
+  const [submissionStatus, setSubmissionStatus] =
+    useState<SubmissionStatus>("idle");
+  const [statusMessage, setStatusMessage] = useState("");
+
+  const sendMessage = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const form = event.currentTarget;
@@ -32,35 +38,61 @@ export function ContactInquiryForm({
     }
 
     const formData = new FormData(form);
-    const name = getFormValue(formData, "name");
-    const replyEmail = getFormValue(formData, "email");
-    const category = getFormValue(formData, "category");
-    const message = getFormValue(formData, "message");
-    const subject = `${category} inquiry from ${name}`;
-    const body = [
-      "Hello Jericho,",
-      "",
-      message,
-      "",
-      `Project category: ${category}`,
-      `From: ${name}`,
-      `Reply email: ${replyEmail}`,
-    ].join("\r\n");
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 12_000);
 
-    window.location.href = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    setSubmissionStatus("submitting");
+    setStatusMessage("Sending your message securely…");
+
+    try {
+      const response = await fetch("/api/contact", {
+        body: JSON.stringify(Object.fromEntries(formData)),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        signal: controller.signal,
+      });
+      const result = (await response
+        .json()
+        .catch(() => null)) as ContactApiResponse | null;
+
+      if (!response.ok || !result?.ok) {
+        throw new Error(
+          result?.message ||
+            "The message could not be delivered right now. Please use the email link below.",
+        );
+      }
+
+      form.reset();
+      setSubmissionStatus("success");
+      setStatusMessage(result.message);
+    } catch (error) {
+      setSubmissionStatus("error");
+      setStatusMessage(
+        error instanceof Error && error.name !== "AbortError"
+          ? error.message
+          : "The request timed out. Please try again or use the email link below.",
+      );
+    } finally {
+      window.clearTimeout(timeout);
+    }
   };
 
   return (
     <form
-      aria-describedby="contact-form-note"
+      aria-busy={submissionStatus === "submitting"}
+      aria-describedby="contact-form-status"
       className="contact-form"
-      onSubmit={prepareEmail}
+      onSubmit={sendMessage}
     >
       <div className="contact-form-row">
         <label className="contact-field">
           <span>Your name</span>
           <input
             autoComplete="name"
+            maxLength={contactLimits.name.max}
+            minLength={contactLimits.name.min}
             name="name"
             placeholder="Your name"
             required
@@ -72,6 +104,7 @@ export function ContactInquiryForm({
           <span>Your email</span>
           <input
             autoComplete="email"
+            maxLength={contactLimits.email.max}
             name="email"
             placeholder="you@example.com"
             required
@@ -86,7 +119,7 @@ export function ContactInquiryForm({
           <option disabled value="">
             Select a category
           </option>
-          {projectCategories.map((category) => (
+          {contactCategories.map((category) => (
             <option key={category} value={category}>
               {category}
             </option>
@@ -97,6 +130,8 @@ export function ContactInquiryForm({
       <label className="contact-field">
         <span>Project details</span>
         <textarea
+          maxLength={contactLimits.message.max}
+          minLength={contactLimits.message.min}
           name="message"
           placeholder="A quick outline of the idea, goals, or problem to solve…"
           required
@@ -104,15 +139,40 @@ export function ContactInquiryForm({
         />
       </label>
 
-      <button className="contact-primary-action" type="submit">
-        Prepare email
+      <label aria-hidden="true" className="contact-honeypot">
+        <span>Website</span>
+        <input
+          autoComplete="off"
+          name="website"
+          tabIndex={-1}
+          type="text"
+        />
+      </label>
+
+      <button
+        className="contact-primary-action"
+        disabled={submissionStatus === "submitting"}
+        type="submit"
+      >
+        {submitButtonLabels[submissionStatus]}
         <span aria-hidden="true" className="contact-action-icon">
-          ↗
+          {submissionStatus === "success" ? "✓" : "↗"}
         </span>
       </button>
 
-      <p className="contact-form-note" id="contact-form-note">
-        Opens your email app with the details filled in.
+      <p
+        aria-live="polite"
+        className={`contact-form-status is-${submissionStatus}`}
+        id="contact-form-status"
+        role={submissionStatus === "error" ? "alert" : "status"}
+      >
+        {statusMessage}
+        {submissionStatus === "error" ? (
+          <>
+            {" "}
+            <a href={`mailto:${recipientEmail}`}>Email me directly.</a>
+          </>
+        ) : null}
       </p>
     </form>
   );

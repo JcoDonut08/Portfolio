@@ -7717,13 +7717,16 @@ body {
   gap: clamp(3.5rem, 8vw, 7.5rem);
   overflow: hidden;
   padding: clamp(2.5rem, 5.5vw, 5rem);
-  border: 1px solid rgba(132, 151, 211, 0.18);
+  border: 1px solid rgba(144, 166, 231, 0.3);
   border-radius: 0.9rem;
   background:
-    radial-gradient(circle at 78% 18%, rgba(255, 77, 141, 0.08), transparent 28%),
-    radial-gradient(circle at 18% 92%, rgba(50, 230, 226, 0.07), transparent 30%),
-    linear-gradient(135deg, #0b0d21, #060713 72%);
+    radial-gradient(circle at 78% 18%, rgba(255, 77, 141, 0.13), transparent 30%),
+    radial-gradient(circle at 18% 92%, rgba(50, 230, 226, 0.12), transparent 34%),
+    linear-gradient(135deg, #0d112b, #070817 72%);
   color: var(--bone);
+  box-shadow:
+    inset 0 1px 0 rgba(209, 220, 255, 0.04),
+    0 1.5rem 5rem rgba(0, 0, 0, 0.18);
 }
 
 .contact-shell::before,
@@ -7757,6 +7760,72 @@ body {
   opacity: 0.16;
 }
 
+.contact-constellation {
+  position: absolute;
+  inset: 0 auto 0 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.74;
+  pointer-events: none;
+}
+
+.contact-starfield circle {
+  fill: #b8c8f5;
+  opacity: 0.48;
+}
+
+.contact-starfield .is-glow {
+  fill: #f5f7ff;
+  filter: drop-shadow(0 0 0.38rem rgba(168, 190, 255, 0.72));
+  opacity: 0.9;
+}
+
+.contact-constellation-orbit,
+.contact-constellation-lines path {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.contact-constellation-orbit {
+  stroke: rgba(120, 145, 225, 0.14);
+  stroke-width: 1;
+}
+
+.contact-constellation-lines path {
+  stroke: rgba(150, 174, 244, 0.3);
+  stroke-width: 1;
+}
+
+.contact-constellation-stars circle {
+  fill: #7788bf;
+  opacity: 0.72;
+}
+
+.contact-constellation-stars .is-bright {
+  fill: #f1f4ff;
+  filter: drop-shadow(0 0 0.42rem rgba(184, 201, 255, 0.9));
+  opacity: 0.95;
+}
+
+.contact-constellation-stars .is-cyan {
+  fill: #42f2eb;
+  filter: drop-shadow(0 0 0.5rem rgba(50, 230, 226, 0.85));
+  opacity: 1;
+}
+
+.contact-constellation-stars .is-pink {
+  fill: #ff5a96;
+  filter: drop-shadow(0 0 0.5rem rgba(255, 77, 141, 0.78));
+  opacity: 1;
+}
+
+.contact-copy,
+.contact-actions {
+  position: relative;
+  z-index: 1;
+}
+
 .contact-kicker {
   display: flex;
   align-items: center;
@@ -7783,7 +7852,7 @@ body {
 .contact-copy h2 {
   max-width: 10ch;
   margin: 0;
-  color: var(--bone);
+  color: #fbfbff;
   font-family: Arial Narrow, Bahnschrift, "Segoe UI", sans-serif;
   font-size: clamp(3.5rem, 6.3vw, 5.75rem);
   font-stretch: condensed;
@@ -7803,8 +7872,9 @@ body {
 }
 
 .contact-title-final strong {
-  color: var(--cyan);
+  color: #42f2eb;
   font: inherit;
+  text-shadow: 0 0 1.8rem rgba(50, 230, 226, 0.2);
 }
 
 .contact-summary {
@@ -7936,6 +8006,55 @@ body {
   line-height: 1.5;
 }
 
+.contact-honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.contact-form-status {
+  min-height: 1.5em;
+  margin: -0.25rem 0 0;
+  color: #9aa6c6;
+  font-family: var(--font-geist-sans), Arial, sans-serif;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.contact-form-status.is-submitting {
+  color: var(--electric-blue-soft);
+}
+
+.contact-form-status.is-success {
+  color: var(--cyan);
+}
+
+.contact-form-status.is-error {
+  color: #ff9dbf;
+}
+
+.contact-form-status a {
+  color: var(--bone);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: rgba(50, 230, 226, 0.58);
+  text-underline-offset: 0.2em;
+}
+
+.contact-form-status a:hover {
+  color: var(--cyan);
+}
+
+.contact-form-status a:focus-visible {
+  border-radius: 0.15rem;
+  outline: 2px solid var(--electric-blue-bright);
+  outline-offset: 0.2rem;
+}
+
 .contact-primary-action,
 .contact-secondary-action {
   display: flex;
@@ -7962,6 +8081,18 @@ body {
   background: rgba(50, 230, 226, 0.07);
   cursor: pointer;
   text-align: left;
+}
+
+.contact-primary-action:disabled {
+  cursor: wait;
+  opacity: 0.78;
+}
+
+.contact-primary-action:disabled:hover {
+  border-color: rgba(50, 230, 226, 0.42);
+  background: rgba(50, 230, 226, 0.07);
+  color: var(--bone);
+  transform: none;
 }
 
 .contact-secondary-action {
@@ -8269,6 +8400,11 @@ body {
     padding: clamp(2.5rem, 7vw, 4rem);
   }
 
+  .contact-constellation {
+    height: 58%;
+    opacity: 0.62;
+  }
+
   .contact-actions {
     max-width: none;
   }
@@ -8352,6 +8488,13 @@ body {
     width: 28rem;
   }
 
+  .contact-constellation {
+    top: 0;
+    width: 145%;
+    height: 48%;
+    transform: translateX(-16%);
+  }
+
   .contact-copy h2 {
     max-width: 10ch;
     font-size: clamp(2.75rem, 13vw, 3.7rem);
@@ -8375,6 +8518,10 @@ body {
   }
 
   .contact-form-note {
+    font-size: 0.875rem;
+  }
+
+  .contact-form-status {
     font-size: 0.875rem;
   }
 
@@ -9810,8 +9957,9 @@ body {
 }
 
 .project-card-type {
-  color: color-mix(in srgb, var(--project-accent) 58%, #cbd3ef);
-  font-size: 0.53rem;
+  color: color-mix(in srgb, var(--project-accent) 76%, #f4f6ff);
+  font-size: 0.56rem;
+  font-weight: 800;
   letter-spacing: 0.13em;
 }
 
@@ -9825,19 +9973,21 @@ body {
 .project-card-description {
   min-height: 6.8rem;
   margin-top: 1rem;
-  color: #b7c0d9;
-  font-size: clamp(0.82rem, 1.05vw, 0.9rem);
-  line-height: 1.65;
+  color: #d6dced;
+  font-size: clamp(0.86rem, 1.05vw, 0.94rem);
+  font-weight: 500;
+  line-height: 1.7;
 }
 
 .project-card-stack {
   margin-top: auto;
   padding-top: 1rem;
-  border-top-color: rgba(149, 162, 207, 0.12);
+  border-top-color: rgba(164, 181, 233, 0.22);
 }
 
 .project-card-stack > p {
-  color: #7f8aa8;
+  color: #aab6d6;
+  font-weight: 800;
 }
 
 .project-card-stack ul {
@@ -9847,10 +9997,12 @@ body {
 .project-card-stack li {
   min-height: 1.7rem;
   padding: 0.4rem 0.58rem;
-  border: 0;
-  background: rgba(153, 166, 211, 0.07);
-  color: #d8def0;
-  font-size: 0.5rem;
+  border: 1px solid
+    color-mix(in srgb, var(--project-accent) 18%, rgba(171, 186, 232, 0.16));
+  background: color-mix(in srgb, var(--project-accent) 9%, rgba(137, 151, 197, 0.08));
+  color: #edf1ff;
+  font-size: 0.53rem;
+  font-weight: 700;
 }
 
 .project-github-link {
@@ -10018,4 +10170,26 @@ body {
   .project-github-link .project-github-arrow {
     transition: none;
   }
+}
+
+/* A single orbital horizon keeps each portfolio chapter visually connected. */
+.about-section,
+.skills-section,
+.education-section,
+.projects-section,
+.contact-section {
+  border-top: 1px solid transparent;
+  border-image: linear-gradient(
+      90deg,
+      transparent 4%,
+      rgba(134, 157, 220, 0.28) 11%,
+      rgba(134, 157, 220, 0.28) 89%,
+      transparent 96%
+    )
+    1;
+}
+
+.skills-section::before,
+.education-section::before {
+  content: none;
 }

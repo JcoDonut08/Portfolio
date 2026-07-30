@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type PointerEvent } from "react";
 import { PortfolioCard } from "@/components/portfolio-card";
+import { siteConfig } from "@/lib/site";
 
 const roles = ["front-end developer", "UI/UX designer", "creative developer"];
 
@@ -117,7 +118,7 @@ export function HeroSection({ isActive }: HeroSectionProps) {
             <a
               aria-label="GitHub"
               className="hero-social-link"
-              href="https://github.com/JcoDonut08"
+              href={siteConfig.githubUrl}
               rel="noreferrer"
               target="_blank"
             >
@@ -126,7 +127,11 @@ export function HeroSection({ isActive }: HeroSectionProps) {
             <span aria-label="LinkedIn profile link to be added" className="hero-social-link is-pending" role="img">
               <LinkedInIcon />
             </span>
-            <a aria-label="Email" className="hero-social-link" href="mailto:hello@example.com">
+            <a
+              aria-label={`Email ${siteConfig.email}`}
+              className="hero-social-link"
+              href={`mailto:${siteConfig.email}`}
+            >
               <MailIcon />
             </a>
           </div>
