@@ -42,7 +42,7 @@ export function ContactInquiryForm({
     const timeout = window.setTimeout(() => controller.abort(), 12_000);
 
     setSubmissionStatus("submitting");
-    setStatusMessage("Sending your message securely…");
+    setStatusMessage("");
 
     try {
       const response = await fetch("/api/contact", {
@@ -66,7 +66,7 @@ export function ContactInquiryForm({
 
       form.reset();
       setSubmissionStatus("success");
-      setStatusMessage(result.message);
+      setStatusMessage("");
     } catch (error) {
       setSubmissionStatus("error");
       setStatusMessage(
@@ -82,7 +82,9 @@ export function ContactInquiryForm({
   return (
     <form
       aria-busy={submissionStatus === "submitting"}
-      aria-describedby="contact-form-status"
+      aria-describedby={
+        submissionStatus === "error" ? "contact-form-status" : undefined
+      }
       className="contact-form"
       onSubmit={sendMessage}
     >
@@ -160,20 +162,17 @@ export function ContactInquiryForm({
         </span>
       </button>
 
-      <p
-        aria-live="polite"
-        className={`contact-form-status is-${submissionStatus}`}
-        id="contact-form-status"
-        role={submissionStatus === "error" ? "alert" : "status"}
-      >
-        {statusMessage}
-        {submissionStatus === "error" ? (
-          <>
-            {" "}
-            <a href={`mailto:${recipientEmail}`}>Email me directly.</a>
-          </>
-        ) : null}
-      </p>
+      {submissionStatus === "error" ? (
+        <p
+          aria-live="assertive"
+          className="contact-form-status is-error"
+          id="contact-form-status"
+          role="alert"
+        >
+          {statusMessage}{" "}
+          <a href={`mailto:${recipientEmail}`}>Email me directly.</a>
+        </p>
+      ) : null}
     </form>
   );
 }

@@ -4,7 +4,12 @@ import { useEffect, useState, type PointerEvent } from "react";
 import { PortfolioCard } from "@/components/portfolio-card";
 import { siteConfig } from "@/lib/site";
 
-const roles = ["front-end developer", "UI/UX designer", "creative developer"];
+const roles = [
+  "front-end developer",
+  "back-end developer",
+  "UI/UX designer",
+  "creative developer",
+];
 
 function GitHubIcon() {
   return (
