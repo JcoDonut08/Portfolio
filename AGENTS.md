@@ -18,6 +18,8 @@ For any task involving React, Next.js, CSS, layout, components, hooks, accessibi
 - Keep accessibility, reduced motion, and keyboard support intact.
 - Avoid unnecessary dependencies and broad rewrites.
 - Preserve unrelated user changes in the working tree.
+- Keep the Technology in orbit section draggable, but do not show a visible
+  "Drag to explore" prompt.
 
 ## Completion Checks
 

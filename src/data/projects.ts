@@ -1,26 +1,41 @@
 export const projects = [
   {
-    title: "Signal Studio",
-    type: "Interactive Website",
+    title: "AgriSphere",
+    type: "Agricultural marketplace",
     description:
-      "A cinematic landing experience with motion-led storytelling, responsive layout, and a contact-first flow.",
-    stack: ["Next.js", "Motion", "Tailwind"],
-    accent: "cyan",
-  },
-  {
-    title: "Interface Gallery",
-    type: "Frontend System",
-    description:
-      "A polished component direction for clean navigation, crisp hierarchy, and reusable visual patterns.",
-    stack: ["React", "TypeScript", "Design Systems"],
-    accent: "magenta",
-  },
-  {
-    title: "Motion Lab",
-    type: "Creative Prototype",
-    description:
-      "A playground for scroll rhythm, hover feedback, and lightweight canvas experiments built for speed.",
-    stack: ["Three.js", "R3F", "CSS"],
+      "A role-based marketplace connecting farmers and buyers through product discovery, secure ordering, seller tools, and crop forecasting.",
+    stack: ["PHP", "MySQL", "Flask", "Python"],
     accent: "amber",
+    repoName: "JcoDonut08/AgriSphere-Grp9",
+    repoUrl: "https://github.com/JcoDonut08/AgriSphere-Grp9",
+    imageSrc: "/assets/projects/agrisphere-homepage.jpg",
+    imageAlt:
+      "Farmers tending crops in a sunlit field for the AgriSphere marketplace",
   },
-];
+  {
+    title: "Loveby_Ade",
+    type: "Dessert e-commerce",
+    description:
+      "A full-stack dessert storefront with product discovery, favorites, checkout, order tracking, promotions, and an admin workspace.",
+    stack: ["Laravel", "Blade", "Tailwind CSS", "JavaScript"],
+    accent: "magenta",
+    repoName: "JcoDonut08/Loveby_Ade",
+    repoUrl: "https://github.com/JcoDonut08/Loveby_Ade",
+    imageSrc: "/assets/projects/loveby-ade-homepage.jpg",
+    imageAlt:
+      "Chocolate cake featured across the Loveby Ade storefront homepage",
+  },
+  {
+    title: "Portfolio",
+    type: "Interactive portfolio",
+    description:
+      "A cinematic personal portfolio combining responsive interface craft, purposeful motion, and an interactive 3D identity card.",
+    stack: ["Next.js", "TypeScript", "R3F", "Motion"],
+    accent: "cyan",
+    repoName: "JcoDonut08/Portfolio",
+    repoUrl: "https://github.com/JcoDonut08/Portfolio",
+    imageSrc: "/assets/projects/portfolio-homepage.png",
+    imageAlt:
+      "Jericho Paul Salvador portfolio homepage with an interactive celestial identity card",
+  },
+] as const;

@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { AboutSection } from "@/components/about-section";
+import { ContactSection } from "@/components/contact-section";
 import { EducationSection } from "@/components/education-section";
 import { HeroSection } from "@/components/hero-section";
 import { OpeningSequence } from "@/components/opening-sequence";
+import { ProjectsSection } from "@/components/projects-section";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNavigation } from "@/components/site-navigation";
 import { SkillsSection } from "@/components/skills-section";
@@ -61,6 +63,8 @@ export function PortfolioExperience() {
       <AboutSection />
       <SkillsSection />
       <EducationSection />
+      <ProjectsSection />
+      <ContactSection />
       <SiteFooter />
       {hasEntered ? null : <OpeningSequence onComplete={enterExperience} />}
     </main>

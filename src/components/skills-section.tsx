@@ -123,7 +123,6 @@ export function SkillsSection() {
 
         <div className="skills-orbit-wrap" data-reveal="skills-orbit">
           <div
-            aria-describedby="skills-drag-hint"
             aria-label="Interactive 3D technology orbit. Drag horizontally or use the left and right arrow keys to rotate it."
             className={`skills-orbit-stage${isDragging ? " is-dragging" : ""}`}
             onKeyDown={handleOrbitKeyDown}
@@ -141,11 +140,6 @@ export function SkillsSection() {
               rotation={rotation}
               selectedId={selectedId}
             />
-
-            <p className="skills-drag-hint" id="skills-drag-hint">
-              <span aria-hidden="true" />
-              Drag to explore
-            </p>
           </div>
         </div>
       </div>
