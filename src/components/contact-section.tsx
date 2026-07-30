@@ -1,4 +1,5 @@
 import { siteConfig } from "@/lib/site";
+import { ContactInquiryForm } from "@/components/contact-inquiry-form";
 
 export function ContactSection() {
   return (
@@ -14,8 +15,11 @@ export function ContactSection() {
             Open channel
           </p>
           <h2 id="contact-title">
-            Let&apos;s make the next idea
-            <span>move.</span>
+            <span>Let&apos;s make</span>
+            <span>the next</span>
+            <span className="contact-title-final">
+              idea <strong>move.</strong>
+            </span>
           </h2>
           <p className="contact-summary">
             Have a project, collaboration, or interface problem in mind? Send
@@ -25,13 +29,7 @@ export function ContactSection() {
 
         <div className="contact-actions">
           <p className="contact-action-label">Start a conversation</p>
-          <a
-            className="contact-primary-action"
-            href={`mailto:${siteConfig.email}?subject=Portfolio%20project%20inquiry`}
-          >
-            Email me
-            <span aria-hidden="true">↗</span>
-          </a>
+          <ContactInquiryForm recipientEmail={siteConfig.email} />
           <a
             className="contact-secondary-action"
             href={siteConfig.githubUrl}
@@ -39,7 +37,9 @@ export function ContactSection() {
             target="_blank"
           >
             View GitHub
-            <span aria-hidden="true">↗</span>
+            <span aria-hidden="true" className="contact-action-icon">
+              ↗
+            </span>
           </a>
 
           <dl className="contact-details">
