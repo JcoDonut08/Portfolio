@@ -8016,6 +8016,17 @@ body {
   white-space: nowrap;
 }
 
+.contact-turnstile {
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 0.45rem;
+}
+
+.contact-turnstile:empty {
+  display: none;
+}
+
 .contact-form-status {
   margin: -0.25rem 0 0;
   color: #9aa6c6;

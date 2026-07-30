@@ -5,38 +5,30 @@ import {
   validateContactSubmission,
 } from "@/lib/contact";
 import { createContactEmailContent } from "@/lib/contact-email";
+import {
+  checkContactEmailRateLimit,
+  checkContactRequestRateLimits,
+  getClientIdentifier,
+  isTrustedContactRequest,
+  verifyTurnstile,
+} from "@/lib/contact-security";
 import { siteConfig } from "@/lib/site";
 
 export const runtime = "nodejs";
 
 const resendEndpoint = "https://api.resend.com/emails";
 const requestBodyLimit = 12_000;
-const requestWindowMs = 15 * 60 * 1000;
-const maxRequestsPerWindow = 5;
 const providerTimeoutMs = 10_000;
-
-type RateLimitEntry = {
-  count: number;
-  resetAt: number;
-};
 
 type ResendErrorResponse = {
   message?: string;
   name?: string;
 };
 
-const globalWithContactRateLimit = globalThis as typeof globalThis & {
-  contactRateLimit?: Map<string, RateLimitEntry>;
-};
-
-const contactRateLimit =
-  globalWithContactRateLimit.contactRateLimit ??
-  new Map<string, RateLimitEntry>();
-
-globalWithContactRateLimit.contactRateLimit = contactRateLimit;
-
 const responseHeaders = {
   "Cache-Control": "no-store",
+  "Referrer-Policy": "no-referrer",
+  "X-Content-Type-Options": "nosniff",
 } as const;
 
 function jsonResponse(body: ContactApiResponse, status: number) {
@@ -46,79 +38,8 @@ function jsonResponse(body: ContactApiResponse, status: number) {
   });
 }
 
-function getClientIdentifier(request: Request) {
-  const forwardedFor = request.headers
-    .get("x-forwarded-for")
-    ?.split(",")[0]
-    ?.trim();
-
-  return (
-    forwardedFor ||
-    request.headers.get("x-real-ip")?.trim() ||
-    "local-or-unknown"
-  );
-}
-
-function checkRateLimit(clientIdentifier: string) {
-  const now = Date.now();
-  const currentEntry = contactRateLimit.get(clientIdentifier);
-
-  if (!currentEntry || currentEntry.resetAt <= now) {
-    contactRateLimit.set(clientIdentifier, {
-      count: 1,
-      resetAt: now + requestWindowMs,
-    });
-
-    return {
-      allowed: true,
-      retryAfter: 0,
-    };
-  }
-
-  if (currentEntry.count >= maxRequestsPerWindow) {
-    return {
-      allowed: false,
-      retryAfter: Math.max(1, Math.ceil((currentEntry.resetAt - now) / 1000)),
-    };
-  }
-
-  currentEntry.count += 1;
-  contactRateLimit.set(clientIdentifier, currentEntry);
-
-  if (contactRateLimit.size > 500) {
-    for (const [identifier, entry] of contactRateLimit) {
-      if (entry.resetAt <= now) {
-        contactRateLimit.delete(identifier);
-      }
-    }
-
-    while (contactRateLimit.size > 500) {
-      const oldestIdentifier = contactRateLimit.keys().next().value;
-
-      if (typeof oldestIdentifier !== "string") {
-        break;
-      }
-
-      contactRateLimit.delete(oldestIdentifier);
-    }
-  }
-
-  return {
-    allowed: true,
-    retryAfter: 0,
-  };
-}
-
-function isBlockedCrossSiteRequest(request: Request) {
-  const fetchSite = request.headers.get("sec-fetch-site");
-
-  return Boolean(
-    fetchSite && fetchSite !== "same-origin" && fetchSite !== "same-site",
-  );
-}
-
 export async function POST(request: Request) {
-  if (isBlockedCrossSiteRequest(request)) {
+  if (!isTrustedContactRequest(request)) {
     return jsonResponse(
       {
         ok: false,
@@ -176,12 +97,17 @@ export async function POST(request: Request) {
     );
   }
 
-  if (
+  const requestRecord =
     typeof requestBody === "object" &&
     requestBody !== null &&
-    !Array.isArray(requestBody) &&
-    typeof (requestBody as Record<string, unknown>).website === "string" &&
-    (requestBody as Record<string, string>).website.trim().length > 0
+    !Array.isArray(requestBody)
+      ? (requestBody as Record<string, unknown>)
+      : null;
+
+  if (
+    requestRecord &&
+    typeof requestRecord.website === "string" &&
+    requestRecord.website.trim().length > 0
   ) {
     return jsonResponse(
       {
@@ -205,7 +131,8 @@ export async function POST(request: Request) {
     );
   }
 
-  const rateLimit = checkRateLimit(getClientIdentifier(request));
+  const clientIdentifier = getClientIdentifier(request);
+  const rateLimit = checkContactRequestRateLimits(clientIdentifier);
 
   if (!rateLimit.allowed) {
     return Response.json(
@@ -217,6 +144,39 @@ export async function POST(request: Request) {
         headers: {
           ...responseHeaders,
           "Retry-After": String(rateLimit.retryAfter),
+        },
+        status: 429,
+      },
+    );
+  }
+
+  const isVerifiedVisitor = await verifyTurnstile(
+    requestRecord && requestRecord.turnstileToken,
+    clientIdentifier,
+  );
+
+  if (!isVerifiedVisitor) {
+    return jsonResponse(
+      {
+        ok: false,
+        message: "Complete the security check and try again.",
+      },
+      403,
+    );
+  }
+
+  const emailRateLimit = checkContactEmailRateLimit(validation.data.email);
+
+  if (!emailRateLimit.allowed) {
+    return Response.json(
+      {
+        ok: false,
+        message: "Too many messages were sent. Please try again later.",
+      } satisfies ContactApiResponse,
+      {
+        headers: {
+          ...responseHeaders,
+          "Retry-After": String(emailRateLimit.retryAfter),
         },
         status: 429,
       },
