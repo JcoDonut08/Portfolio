@@ -111,12 +111,8 @@ export function HeroSection({ isActive }: HeroSectionProps) {
             <a className="hero-action hero-action-primary" href="#contact">
               Contact me <span aria-hidden="true">↓</span>
             </a>
-            <a
-              className="hero-action hero-action-secondary"
-              download
-              href="/assets/resume/Jericho-Salvador-Resume.pdf"
-            >
-              Download résumé
+            <a className="hero-action hero-action-secondary" href="#projects">
+              View project
             </a>
           </div>
           <div aria-label="Social links" className="hero-social-links">

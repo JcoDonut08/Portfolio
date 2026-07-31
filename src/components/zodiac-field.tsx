@@ -224,12 +224,13 @@ export function ZodiacField({ isActive = true, variant = "hero" }: ZodiacFieldPr
           {zodiacConstellations.map((constellation, constellationIndex) => {
             const projected = projectConstellation(constellation);
             const { x, y, rotation, width, height } = constellation.placement;
+            const delayStep = variant === "splash" ? 18 : 90;
 
             return (
               <g
                 className="zodiac-constellation"
                 key={constellation.id}
-                style={{ "--zodiac-delay": `${constellationIndex * 90}ms` } as CSSProperties}
+                style={{ "--zodiac-delay": `${constellationIndex * delayStep}ms` } as CSSProperties}
                 transform={`translate(${x} ${y}) rotate(${rotation} ${width / 2} ${height / 2})`}
               >
                 {projected.lines.map((line, lineIndex) => (

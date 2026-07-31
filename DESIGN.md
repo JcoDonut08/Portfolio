@@ -22,11 +22,13 @@ Jericho's portfolio uses a neon-studio and digital-gallery direction: near-black
 
 ## Layout
 
-The hero is immersive and asymmetrical: copy sits in the foreground while the animated canvas acts as the visual proof. Sections below use generous spacing, thin dividers, and project panels with varied accent colors instead of a repeated generic card system.
+The hero is immersive and asymmetrical: copy sits in the foreground while the animated canvas acts as the visual proof. On phones, the identity card becomes a centered second row beneath the hero copy instead of overlapping it. Sections below use generous spacing, thin dividers, and project panels with varied accent colors instead of a repeated generic card system.
 
 ## Motion
 
-- Intro overlay plays once per session for about two seconds.
+- Intro overlay finishes the celestial-field entrance first, then draws a
+  centered `JPSalvador` signature as thin constellation lines with luminous
+  star nodes. It enters automatically after about 3.8 seconds with no controls.
 - Hero content reveals after the intro with a short stagger.
 - Project items use a capped stagger.
 - CTAs use fast hover and tap feedback.
@@ -34,7 +36,7 @@ The hero is immersive and asymmetrical: copy sits in the foreground while the an
 
 ## Components
 
-- `OpeningSequence`: narrative intro overlay with skip.
+- `OpeningSequence`: lightweight SVG signature intro over the celestial field.
 - `HeroScene`: dynamically loaded React Three Fiber canvas.
 - `AnimatedHome`: client-side orchestration for Motion and page sections.
 - `SiteHeader`: sticky navigation with high contrast and direct section links.

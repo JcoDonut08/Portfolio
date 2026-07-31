@@ -5,6 +5,8 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 
 import {
   type ContactApiResponse,
+  type ContactField,
+  type ContactFieldErrors,
   contactCategories,
   contactLimits,
 } from "@/lib/contact";
@@ -50,12 +52,20 @@ const submitButtonLabels: Record<SubmissionStatus, string> = {
 const turnstileSiteKey =
   process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim() ?? "";
 
+const contactFieldOrder: readonly ContactField[] = [
+  "name",
+  "email",
+  "category",
+  "message",
+];
+
 export function ContactInquiryForm({
   recipientEmail,
 }: ContactInquiryFormProps) {
   const [submissionStatus, setSubmissionStatus] =
     useState<SubmissionStatus>("idle");
   const [statusMessage, setStatusMessage] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<ContactFieldErrors>({});
   const [turnstileToken, setTurnstileToken] = useState("");
   const [isTurnstileReady, setIsTurnstileReady] = useState(false);
   const turnstileContainerRef = useRef<HTMLDivElement>(null);
@@ -104,6 +114,42 @@ export function ContactInquiryForm({
     };
   }, [isTurnstileReady]);
 
+  const clearFieldError = (field: ContactField) => {
+    setFieldErrors((currentErrors) => {
+      if (!currentErrors[field]) {
+        return currentErrors;
+      }
+
+      const nextErrors = { ...currentErrors };
+      delete nextErrors[field];
+      return nextErrors;
+    });
+
+    if (submissionStatus === "success") {
+      setSubmissionStatus("idle");
+      setStatusMessage("");
+    }
+  };
+
+  const focusFirstInvalidField = (
+    form: HTMLFormElement,
+    errors: ContactFieldErrors,
+  ) => {
+    const firstInvalidField = contactFieldOrder.find((field) => errors[field]);
+
+    if (!firstInvalidField) {
+      return;
+    }
+
+    window.requestAnimationFrame(() => {
+      const control = form.elements.namedItem(firstInvalidField);
+
+      if (control instanceof HTMLElement) {
+        control.focus();
+      }
+    });
+  };
+
   const sendMessage = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -112,6 +158,8 @@ export function ContactInquiryForm({
     if (!form.reportValidity()) {
       return;
     }
+
+    setFieldErrors({});
 
     const formData = new FormData(form);
 
@@ -144,15 +192,23 @@ export function ContactInquiryForm({
         .catch(() => null)) as ContactApiResponse | null;
 
       if (!response.ok || !result?.ok) {
-        throw new Error(
+        const nextFieldErrors =
+          result && !result.ok ? result.errors ?? {} : {};
+
+        setFieldErrors(nextFieldErrors);
+        setSubmissionStatus("error");
+        setStatusMessage(
           result?.message ||
             "The message could not be delivered right now. Please use the email link below.",
         );
+        focusFirstInvalidField(form, nextFieldErrors);
+        return;
       }
 
       form.reset();
+      setFieldErrors({});
       setSubmissionStatus("success");
-      setStatusMessage("");
+      setStatusMessage(result.message);
     } catch (error) {
       setSubmissionStatus("error");
       setStatusMessage(
@@ -180,35 +236,65 @@ export function ContactInquiryForm({
       onSubmit={sendMessage}
     >
       <div className="contact-form-row">
-        <label className="contact-field">
-          <span>Your name</span>
+        <div className="contact-field">
+          <label htmlFor="contact-name">Your name</label>
           <input
+            aria-describedby={fieldErrors.name ? "contact-name-error" : undefined}
+            aria-errormessage={fieldErrors.name ? "contact-name-error" : undefined}
+            aria-invalid={Boolean(fieldErrors.name)}
             autoComplete="name"
+            id="contact-name"
             maxLength={contactLimits.name.max}
             minLength={contactLimits.name.min}
             name="name"
+            onChange={() => clearFieldError("name")}
             placeholder="Your name"
             required
             type="text"
           />
-        </label>
+          {fieldErrors.name ? (
+            <p className="contact-field-error" id="contact-name-error">
+              {fieldErrors.name}
+            </p>
+          ) : null}
+        </div>
 
-        <label className="contact-field">
-          <span>Your email</span>
+        <div className="contact-field">
+          <label htmlFor="contact-email">Your email</label>
           <input
+            aria-describedby={fieldErrors.email ? "contact-email-error" : undefined}
+            aria-errormessage={fieldErrors.email ? "contact-email-error" : undefined}
+            aria-invalid={Boolean(fieldErrors.email)}
             autoComplete="email"
+            id="contact-email"
             maxLength={contactLimits.email.max}
             name="email"
+            onChange={() => clearFieldError("email")}
             placeholder="you@example.com"
             required
+            spellCheck={false}
             type="email"
           />
-        </label>
+          {fieldErrors.email ? (
+            <p className="contact-field-error" id="contact-email-error">
+              {fieldErrors.email}
+            </p>
+          ) : null}
+        </div>
       </div>
 
-      <label className="contact-field">
-        <span>Project category</span>
-        <select defaultValue="" name="category" required>
+      <div className="contact-field">
+        <label htmlFor="contact-category">Project category</label>
+        <select
+          aria-describedby={fieldErrors.category ? "contact-category-error" : undefined}
+          aria-errormessage={fieldErrors.category ? "contact-category-error" : undefined}
+          aria-invalid={Boolean(fieldErrors.category)}
+          defaultValue=""
+          id="contact-category"
+          name="category"
+          onChange={() => clearFieldError("category")}
+          required
+        >
           <option disabled value="">
             Select a category
           </option>
@@ -218,19 +304,34 @@ export function ContactInquiryForm({
             </option>
           ))}
         </select>
-      </label>
+        {fieldErrors.category ? (
+          <p className="contact-field-error" id="contact-category-error">
+            {fieldErrors.category}
+          </p>
+        ) : null}
+      </div>
 
-      <label className="contact-field">
-        <span>Project details</span>
+      <div className="contact-field">
+        <label htmlFor="contact-message">Project details</label>
         <textarea
+          aria-describedby={fieldErrors.message ? "contact-message-error" : undefined}
+          aria-errormessage={fieldErrors.message ? "contact-message-error" : undefined}
+          aria-invalid={Boolean(fieldErrors.message)}
+          id="contact-message"
           maxLength={contactLimits.message.max}
           minLength={contactLimits.message.min}
           name="message"
+          onChange={() => clearFieldError("message")}
           placeholder="A quick outline of the idea, goals, or problem to solve…"
           required
           rows={4}
         />
-      </label>
+        {fieldErrors.message ? (
+          <p className="contact-field-error" id="contact-message-error">
+            {fieldErrors.message}
+          </p>
+        ) : null}
+      </div>
 
       <label aria-hidden="true" className="contact-honeypot">
         <span>Website</span>
@@ -278,6 +379,16 @@ export function ContactInquiryForm({
         >
           {statusMessage}{" "}
           <a href={`mailto:${recipientEmail}`}>Email me directly.</a>
+        </p>
+      ) : null}
+      {submissionStatus === "success" ? (
+        <p
+          aria-live="polite"
+          className="contact-form-status is-success"
+          id="contact-form-success"
+          role="status"
+        >
+          {statusMessage}
         </p>
       ) : null}
     </form>

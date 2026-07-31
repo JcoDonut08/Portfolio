@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useReducedMotion } from "motion/react";
 import {
+  useEffect,
   useRef,
   useState,
   type KeyboardEvent,
@@ -29,10 +30,51 @@ export function SkillsSection() {
   const [selectedId, setSelectedId] = useState<SkillId>("react");
   const [rotation, setRotation] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [isOrbitNearViewport, setIsOrbitNearViewport] = useState(false);
+  const [shouldRenderOrbit, setShouldRenderOrbit] = useState(false);
+  const [lowPowerMode, setLowPowerMode] = useState(false);
   const dragState = useRef<DragState | null>(null);
+  const orbitStageRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = Boolean(useReducedMotion());
   const selectedSkill =
     skills.find((skill) => skill.id === selectedId) ?? skills[0];
+
+  useEffect(() => {
+    const lowPowerQuery = window.matchMedia(
+      "(max-width: 700px), (pointer: coarse)",
+    );
+    const syncLowPowerMode = () => setLowPowerMode(lowPowerQuery.matches);
+
+    syncLowPowerMode();
+    lowPowerQuery.addEventListener("change", syncLowPowerMode);
+
+    return () => lowPowerQuery.removeEventListener("change", syncLowPowerMode);
+  }, []);
+
+  useEffect(() => {
+    const stage = orbitStageRef.current;
+
+    if (!stage || !("IntersectionObserver" in window)) {
+      setIsOrbitNearViewport(true);
+      setShouldRenderOrbit(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsOrbitNearViewport(entry.isIntersecting);
+
+        if (entry.isIntersecting) {
+          setShouldRenderOrbit(true);
+        }
+      },
+      { rootMargin: "240px 0px" },
+    );
+
+    observer.observe(stage);
+
+    return () => observer.disconnect();
+  }, []);
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if ((event.target as HTMLElement).closest("button")) {
@@ -72,6 +114,10 @@ export function SkillsSection() {
   };
 
   const handleOrbitKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.target !== event.currentTarget) {
+      return;
+    }
+
     if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") {
       return;
     }
@@ -124,22 +170,29 @@ export function SkillsSection() {
         <div className="skills-orbit-wrap" data-reveal="skills-orbit">
           <div
             aria-label="Interactive 3D technology orbit. Drag horizontally or use the left and right arrow keys to rotate it."
+            aria-busy={!shouldRenderOrbit}
             className={`skills-orbit-stage${isDragging ? " is-dragging" : ""}`}
             onKeyDown={handleOrbitKeyDown}
             onPointerCancel={finishDrag}
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={finishDrag}
+            ref={orbitStageRef}
             role="group"
+            tabIndex={0}
           >
-            <SkillsOrbitScene
-              isDragging={isDragging}
-              onRotate={rotateOrbit}
-              onSelect={setSelectedId}
-              reducedMotion={prefersReducedMotion}
-              rotation={rotation}
-              selectedId={selectedId}
-            />
+            {shouldRenderOrbit ? (
+              <SkillsOrbitScene
+                isDragging={isDragging}
+                isVisible={isOrbitNearViewport}
+                lowPowerMode={lowPowerMode}
+                onRotate={rotateOrbit}
+                onSelect={setSelectedId}
+                reducedMotion={prefersReducedMotion}
+                rotation={rotation}
+                selectedId={selectedId}
+              />
+            ) : null}
           </div>
         </div>
       </div>

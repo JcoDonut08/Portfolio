@@ -9,6 +9,8 @@ import { skills, type Skill, type SkillId } from "@/components/skills-data";
 
 type SkillsOrbitSceneProps = {
   isDragging: boolean;
+  isVisible: boolean;
+  lowPowerMode: boolean;
   onRotate: (amount: number) => void;
   onSelect: (skillId: SkillId) => void;
   reducedMotion: boolean;
@@ -25,6 +27,11 @@ type OrbitPlaneProps = {
   rotation: number;
   selectedId: SkillId;
 };
+
+type OrbitInstrumentProps = Omit<
+  SkillsOrbitSceneProps,
+  "isVisible" | "lowPowerMode"
+>;
 
 const ORBIT_CONFIGURATION = {
   inner: {
@@ -347,7 +354,7 @@ function OrbitInstrument({
   reducedMotion,
   rotation,
   selectedId,
-}: SkillsOrbitSceneProps) {
+}: OrbitInstrumentProps) {
   const instrumentRef = useRef<THREE.Group>(null);
   const viewportWidth = useThree((state) => state.size.width);
   const scale =
@@ -414,6 +421,8 @@ function OrbitInstrument({
 
 export function SkillsOrbitScene({
   isDragging,
+  isVisible,
+  lowPowerMode,
   onRotate,
   onSelect,
   reducedMotion,
@@ -424,12 +433,12 @@ export function SkillsOrbitScene({
     <Canvas
       camera={{ far: 40, fov: 43, near: 0.1, position: [0, 0, 8.2] }}
       className="skills-orbit-canvas"
-      dpr={reducedMotion ? 1 : [1, 1.5]}
-      frameloop="always"
+      dpr={reducedMotion || lowPowerMode ? 1 : [1, 1.5]}
+      frameloop={reducedMotion || !isVisible ? "demand" : "always"}
       gl={{
         alpha: true,
-        antialias: true,
-        powerPreference: "high-performance",
+        antialias: !lowPowerMode,
+        powerPreference: lowPowerMode ? "low-power" : "high-performance",
       }}
     >
       <ambientLight intensity={0.72} />

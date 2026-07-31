@@ -105,17 +105,28 @@ export function ContactSection() {
         <div className="contact-actions">
           <p className="contact-action-label">Start a conversation</p>
           <ContactInquiryForm recipientEmail={siteConfig.email} />
-          <a
-            className="contact-secondary-action"
-            href={siteConfig.githubUrl}
-            rel="noreferrer"
-            target="_blank"
-          >
-            View GitHub
-            <span aria-hidden="true" className="contact-action-icon">
-              ↗
-            </span>
-          </a>
+          <div className="contact-secondary-actions">
+            <a
+              className="contact-secondary-action"
+              href={`mailto:${siteConfig.email}`}
+            >
+              Email directly
+              <span aria-hidden="true" className="contact-action-icon">
+                ↗
+              </span>
+            </a>
+            <a
+              className="contact-secondary-action"
+              href={siteConfig.githubUrl}
+              rel="noreferrer"
+              target="_blank"
+            >
+              View GitHub
+              <span aria-hidden="true" className="contact-action-icon">
+                ↗
+              </span>
+            </a>
+          </div>
 
           <dl className="contact-details">
             <div>

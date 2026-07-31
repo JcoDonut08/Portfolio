@@ -7,10 +7,10 @@ type SiteNavigationProps = {
 };
 
 const navigationItems = [
+  { href: "#projects", label: "Projects" },
   { href: "#about", label: "About" },
   { href: "#skills", label: "Skills" },
   { href: "#education", label: "Education" },
-  { href: "#projects", label: "Projects" },
   { href: "#contact", label: "Contact" },
 ] as const;
 

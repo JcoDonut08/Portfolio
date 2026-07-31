@@ -49,24 +49,32 @@ export function PortfolioExperience() {
   };
 
   return (
-    <main className="portfolio-experience">
-      <SiteNavigation isActive={hasEntered} />
-      <div aria-hidden="true" className="portfolio-backdrop">
-        <ZodiacField isActive={hasEntered} />
-        <span className="portfolio-backdrop-planet" />
-        <span className="portfolio-backdrop-vignette" />
+    <div className="portfolio-experience">
+      <div
+        aria-hidden={hasEntered ? undefined : true}
+        className="portfolio-content"
+        inert={hasEntered ? undefined : true}
+      >
+        <SiteNavigation isActive={hasEntered} />
+        <div aria-hidden="true" className="portfolio-backdrop">
+          <ZodiacField isActive={hasEntered} />
+          <span className="portfolio-backdrop-planet" />
+          <span className="portfolio-backdrop-vignette" />
+        </div>
+        <div aria-hidden="true" className="scroll-progress">
+          <span />
+        </div>
+        <main>
+          <HeroSection isActive={hasEntered} />
+          <ProjectsSection />
+          <AboutSection />
+          <SkillsSection />
+          <EducationSection />
+          <ContactSection />
+        </main>
+        <SiteFooter />
       </div>
-      <div aria-hidden="true" className="scroll-progress">
-        <span />
-      </div>
-      <HeroSection isActive={hasEntered} />
-      <AboutSection />
-      <SkillsSection />
-      <EducationSection />
-      <ProjectsSection />
-      <ContactSection />
-      <SiteFooter />
       {hasEntered ? null : <OpeningSequence onComplete={enterExperience} />}
-    </main>
+    </div>
   );
 }
