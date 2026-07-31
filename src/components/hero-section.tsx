@@ -108,8 +108,8 @@ export function HeroSection({ isActive }: HeroSectionProps) {
             I build clear, expressive digital experiences where interface craft and motion do the talking.
           </p>
           <div className="hero-actions">
-            <a className="hero-action hero-action-primary" href="#about">
-              About me <span aria-hidden="true">↓</span>
+            <a className="hero-action hero-action-primary" href="#contact">
+              Contact me <span aria-hidden="true">↓</span>
             </a>
             <a
               className="hero-action hero-action-secondary"
