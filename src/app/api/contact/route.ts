@@ -20,6 +20,18 @@ const resendEndpoint = "https://api.resend.com/emails";
 const requestBodyLimit = 12_000;
 const providerTimeoutMs = 10_000;
 
+type RequestBodyReadResult =
+  | {
+      body: string;
+      status: "ok";
+    }
+  | {
+      status: "invalid";
+    }
+  | {
+      status: "too-large";
+    };
+
 type ResendErrorResponse = {
   message?: string;
   name?: string;
@@ -38,6 +50,67 @@ function jsonResponse(body: ContactApiResponse, status: number) {
   });
 }
 
+function acceptsJsonBody(contentType: string | null) {
+  return contentType?.split(";", 1)[0]?.trim().toLowerCase() ===
+    "application/json";
+}
+
+async function readRequestBody(
+  request: Request,
+): Promise<RequestBodyReadResult> {
+  if (!request.body) {
+    return {
+      body: "",
+      status: "ok",
+    };
+  }
+
+  const reader = request.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let receivedBytes = 0;
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+
+      if (done) {
+        break;
+      }
+
+      receivedBytes += value.byteLength;
+
+      if (receivedBytes > requestBodyLimit) {
+        await reader.cancel();
+
+        return {
+          status: "too-large",
+        };
+      }
+
+      chunks.push(value);
+    }
+
+    const bodyBytes = new Uint8Array(receivedBytes);
+    let offset = 0;
+
+    for (const chunk of chunks) {
+      bodyBytes.set(chunk, offset);
+      offset += chunk.byteLength;
+    }
+
+    return {
+      body: new TextDecoder("utf-8", { fatal: true }).decode(bodyBytes),
+      status: "ok",
+    };
+  } catch {
+    return {
+      status: "invalid",
+    };
+  } finally {
+    reader.releaseLock();
+  }
+}
+
 export async function POST(request: Request) {
   if (!isTrustedContactRequest(request)) {
     return jsonResponse(
@@ -49,7 +122,7 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!request.headers.get("content-type")?.includes("application/json")) {
+  if (!acceptsJsonBody(request.headers.get("content-type"))) {
     return jsonResponse(
       {
         ok: false,
@@ -59,7 +132,21 @@ export async function POST(request: Request) {
     );
   }
 
-  const contentLength = Number(request.headers.get("content-length") ?? 0);
+  const contentLengthHeader = request.headers.get("content-length");
+  const contentLength = Number(contentLengthHeader ?? 0);
+
+  if (
+    contentLengthHeader &&
+    (!Number.isSafeInteger(contentLength) || contentLength < 0)
+  ) {
+    return jsonResponse(
+      {
+        ok: false,
+        message: "The contact message could not be read.",
+      },
+      400,
+    );
+  }
 
   if (contentLength > requestBodyLimit) {
     return jsonResponse(
@@ -72,21 +159,30 @@ export async function POST(request: Request) {
   }
 
   let requestBody: unknown;
+  const bodyResult = await readRequestBody(request);
+
+  if (bodyResult.status === "too-large") {
+    return jsonResponse(
+      {
+        ok: false,
+        message: "The contact message is too large.",
+      },
+      413,
+    );
+  }
+
+  if (bodyResult.status === "invalid") {
+    return jsonResponse(
+      {
+        ok: false,
+        message: "The contact message could not be read.",
+      },
+      400,
+    );
+  }
 
   try {
-    const rawBody = await request.text();
-
-    if (rawBody.length > requestBodyLimit) {
-      return jsonResponse(
-        {
-          ok: false,
-          message: "The contact message is too large.",
-        },
-        413,
-      );
-    }
-
-    requestBody = JSON.parse(rawBody);
+    requestBody = JSON.parse(bodyResult.body);
   } catch {
     return jsonResponse(
       {

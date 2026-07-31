@@ -7,6 +7,7 @@ export default function nextConfig(phase: string): NextConfig {
   const contentSecurityPolicy = [
     "default-src 'self'",
     `script-src 'self' 'unsafe-inline'${isDevelopment ? " 'unsafe-eval'" : ""} https://challenges.cloudflare.com`,
+    "script-src-attr 'none'",
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob:",
     "font-src 'self' data:",
@@ -37,6 +38,10 @@ export default function nextConfig(phase: string): NextConfig {
       value: "same-origin",
     },
     {
+      key: "Origin-Agent-Cluster",
+      value: "?1",
+    },
+    {
       key: "Permissions-Policy",
       value:
         "camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()",
@@ -48,6 +53,10 @@ export default function nextConfig(phase: string): NextConfig {
     {
       key: "X-Content-Type-Options",
       value: "nosniff",
+    },
+    {
+      key: "X-DNS-Prefetch-Control",
+      value: "off",
     },
     {
       key: "X-Frame-Options",

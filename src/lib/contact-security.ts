@@ -54,14 +54,26 @@ function normalizeOrigin(value: string | null | undefined) {
 }
 
 function getConfiguredOrigins() {
-  return (process.env.CONTACT_ALLOWED_ORIGINS ?? "")
-    .split(",")
+  const configuredOrigins = (process.env.CONTACT_ALLOWED_ORIGINS ?? "")
+    .split(",");
+  const vercelOrigins = [
+    process.env.VERCEL_PROJECT_PRODUCTION_URL,
+    process.env.VERCEL_URL,
+  ].map((hostname) => (hostname ? `https://${hostname}` : ""));
+
+  return [...configuredOrigins, ...vercelOrigins]
     .map((origin) => normalizeOrigin(origin.trim()))
     .filter((origin): origin is string => Boolean(origin));
 }
 
 function getTargetOrigins(request: Request) {
-  const targetOrigins = new Set<string>(getConfiguredOrigins());
+  const configuredOrigins = getConfiguredOrigins();
+
+  if (configuredOrigins.length > 0) {
+    return new Set(configuredOrigins);
+  }
+
+  const targetOrigins = new Set<string>();
   const requestOrigin = normalizeOrigin(request.url);
 
   if (requestOrigin) {
@@ -167,11 +179,27 @@ function hashIdentifier(value: string) {
   return createHash("sha256").update(value).digest("hex").slice(0, 32);
 }
 
+function getFirstValidIp(value: string | null) {
+  if (!value) {
+    return null;
+  }
+
+  for (const candidate of value.split(",")) {
+    const normalizedCandidate = candidate.trim();
+
+    if (isIP(normalizedCandidate)) {
+      return normalizedCandidate;
+    }
+  }
+
+  return null;
+}
+
 export function getClientIdentifier(request: Request) {
   return (
-    request.headers.get("x-vercel-forwarded-for")?.split(",")[0]?.trim() ||
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    request.headers.get("x-real-ip")?.trim() ||
+    getFirstValidIp(request.headers.get("x-vercel-forwarded-for")) ||
+    getFirstValidIp(request.headers.get("x-forwarded-for")) ||
+    getFirstValidIp(request.headers.get("x-real-ip")) ||
     "local-or-unknown"
   );
 }
@@ -240,9 +268,14 @@ export async function verifyTurnstile(
   clientIdentifier: string,
 ) {
   const secret = process.env.TURNSTILE_SECRET_KEY?.trim();
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim();
 
-  if (!secret) {
+  if (!secret && !siteKey) {
     return true;
+  }
+
+  if (!secret || !siteKey) {
+    return false;
   }
 
   if (
@@ -254,11 +287,17 @@ export async function verifyTurnstile(
   }
 
   const allowedHostnames = new Set(
-    (process.env.TURNSTILE_ALLOWED_HOSTNAMES ?? "")
-      .split(",")
+    [
+      ...(process.env.TURNSTILE_ALLOWED_HOSTNAMES ?? "").split(","),
+      ...getConfiguredOrigins().map((origin) => new URL(origin).hostname),
+    ]
       .map((hostname) => hostname.trim().toLowerCase())
       .filter(Boolean),
   );
+
+  if (process.env.NODE_ENV === "production" && allowedHostnames.size === 0) {
+    return false;
+  }
 
   try {
     const verificationBody = new URLSearchParams({
