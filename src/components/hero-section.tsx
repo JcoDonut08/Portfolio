@@ -125,9 +125,13 @@ export function HeroSection({ isActive }: HeroSectionProps) {
             >
               <GitHubIcon />
             </a>
-            <span aria-label="LinkedIn profile link to be added" className="hero-social-link is-pending" role="img">
+            <a
+              aria-label="LinkedIn — temporarily unavailable"
+              className="hero-social-link is-pending"
+              href="/unavailable"
+            >
               <LinkedInIcon />
-            </span>
+            </a>
             <a
               aria-label={`Email ${siteConfig.email}`}
               className="hero-social-link"

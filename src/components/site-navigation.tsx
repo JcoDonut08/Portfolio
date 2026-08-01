@@ -101,7 +101,6 @@ export function SiteNavigation({ isActive }: SiteNavigationProps) {
       </div>
 
       <span aria-hidden="true" className="site-navigation-section-readout">
-        <span>Viewing</span>
         <strong>{activeSectionLabel}</strong>
       </span>
 

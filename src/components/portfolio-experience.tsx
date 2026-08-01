@@ -30,20 +30,30 @@ export function PortfolioExperience() {
     };
   }, [hasEntered]);
 
-  const enterExperience = () => {
+  const enterExperience = (preserveLocation = false) => {
     const root = document.documentElement;
     const previousScrollBehavior = root.style.scrollBehavior;
 
     root.style.scrollBehavior = "auto";
-    window.history.replaceState(
-      window.history.state,
-      "",
-      `${window.location.pathname}${window.location.search}`,
-    );
-    window.scrollTo(0, 0);
+
+    if (!preserveLocation) {
+      window.history.replaceState(
+        window.history.state,
+        "",
+        `${window.location.pathname}${window.location.search}`,
+      );
+      window.scrollTo(0, 0);
+    }
+
     setHasEntered(true);
 
     window.requestAnimationFrame(() => {
+      if (preserveLocation && window.location.hash) {
+        document
+          .getElementById(window.location.hash.slice(1))
+          ?.scrollIntoView({ block: "start" });
+      }
+
       root.style.scrollBehavior = previousScrollBehavior;
     });
   };

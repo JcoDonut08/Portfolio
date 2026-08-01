@@ -8,6 +8,7 @@ import {
 } from "react";
 
 import { ZodiacField } from "@/components/zodiac-field";
+import { consumeOpeningSequenceSkip } from "@/lib/experience-navigation";
 
 const signatureTimeScale = 1.12;
 const autoExitDelay = 3560;
@@ -128,7 +129,7 @@ const signatureAccentStars = [
 ] as const;
 
 type OpeningSequenceProps = {
-  onComplete?: () => void;
+  onComplete?: (preserveLocation?: boolean) => void;
 };
 
 function SignatureConstellation() {
@@ -149,10 +150,10 @@ function SignatureConstellation() {
           height="210%"
         >
           <feGaussianBlur in="SourceGraphic" result="wide-blur" stdDeviation="7" />
-          <feFlood floodColor="#075dff" floodOpacity="0.66" result="wide-color" />
+          <feFlood floodColor="#ffffff" floodOpacity="0.38" result="wide-color" />
           <feComposite in="wide-color" in2="wide-blur" operator="in" result="wide-glow" />
           <feGaussianBlur in="SourceGraphic" result="close-blur" stdDeviation="2.2" />
-          <feFlood floodColor="#4b91ff" floodOpacity="0.92" result="close-color" />
+          <feFlood floodColor="#ffffff" floodOpacity="0.9" result="close-color" />
           <feComposite in="close-color" in2="close-blur" operator="in" result="close-glow" />
           <feMerge>
             <feMergeNode in="wide-glow" />
@@ -161,16 +162,16 @@ function SignatureConstellation() {
           </feMerge>
         </filter>
         <linearGradient id="signature-line-gradient" x1="0" x2="1" y1="0" y2="0">
-          <stop offset="0" stopColor="#8ab8ff" />
-          <stop offset="0.48" stopColor="#f8fbff" />
-          <stop offset="0.76" stopColor="#79adff" />
-          <stop offset="1" stopColor="#eaf3ff" />
+          <stop offset="0" stopColor="#f4f5f8" />
+          <stop offset="0.48" stopColor="#ffffff" />
+          <stop offset="0.76" stopColor="#ffffff" />
+          <stop offset="1" stopColor="#f0f2f6" />
         </linearGradient>
         <radialGradient id="signature-node-glow">
           <stop offset="0" stopColor="#ffffff" stopOpacity="1" />
-          <stop offset="0.18" stopColor="#cfe3ff" stopOpacity="0.96" />
-          <stop offset="0.5" stopColor="#4f93ff" stopOpacity="0.58" />
-          <stop offset="1" stopColor="#075dff" stopOpacity="0" />
+          <stop offset="0.18" stopColor="#ffffff" stopOpacity="0.96" />
+          <stop offset="0.5" stopColor="#e5e8ee" stopOpacity="0.5" />
+          <stop offset="1" stopColor="#d9dde6" stopOpacity="0" />
         </radialGradient>
       </defs>
 
@@ -261,13 +262,25 @@ export function OpeningSequence({ onComplete }: OpeningSequenceProps) {
   }, [onComplete]);
 
   useEffect(() => {
+    const shouldSkipSequence = consumeOpeningSequenceSkip();
+
+    if (shouldSkipSequence) {
+      if (onCompleteRef.current) {
+        onCompleteRef.current(true);
+      } else {
+        setIsComplete(true);
+      }
+
+      return;
+    }
+
     const reducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
 
     if (reducedMotion) {
       if (onCompleteRef.current) {
-        onCompleteRef.current();
+        onCompleteRef.current(true);
       } else {
         setIsComplete(true);
       }
@@ -283,7 +296,7 @@ export function OpeningSequence({ onComplete }: OpeningSequenceProps) {
     );
     const completeTimer = window.setTimeout(() => {
       if (onCompleteRef.current) {
-        onCompleteRef.current();
+        onCompleteRef.current(false);
       } else {
         setIsComplete(true);
       }
