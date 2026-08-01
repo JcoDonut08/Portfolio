@@ -73,7 +73,7 @@ export function AnimatedHome() {
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
               >
-                View work
+                View projects
               </motion.a>
             </div>
           </motion.div>

@@ -2,21 +2,28 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { useActiveSection } from "@/hooks/use-active-section";
+
 type SiteNavigationProps = {
   isActive: boolean;
 };
 
 const navigationItems = [
-  { href: "#projects", label: "Projects" },
-  { href: "#about", label: "About" },
-  { href: "#skills", label: "Skills" },
-  { href: "#education", label: "Education" },
-  { href: "#contact", label: "Contact" },
+  { href: "#projects", id: "projects", label: "Projects" },
+  { href: "#about", id: "about", label: "About" },
+  { href: "#skills", id: "skills", label: "Skills" },
+  { href: "#education", id: "education", label: "Education" },
+  { href: "#contact", id: "contact", label: "Contact" },
 ] as const;
+
+const navigationSectionIds = navigationItems.map((item) => item.id);
 
 export function SiteNavigation({ isActive }: SiteNavigationProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const activeSection = useActiveSection(navigationSectionIds, isActive);
+  const activeSectionLabel =
+    navigationItems.find((item) => item.id === activeSection)?.label ?? "Home";
   const headerRef = useRef<HTMLElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -93,6 +100,11 @@ export function SiteNavigation({ isActive }: SiteNavigationProps) {
         </a>
       </div>
 
+      <span aria-hidden="true" className="site-navigation-section-readout">
+        <span>Viewing</span>
+        <strong>{activeSectionLabel}</strong>
+      </span>
+
       <button
         aria-controls="primary-navigation"
         aria-expanded={isMenuOpen}
@@ -115,11 +127,15 @@ export function SiteNavigation({ isActive }: SiteNavigationProps) {
       >
         {navigationItems.map((item) => (
           <a
+            aria-current={activeSection === item.id ? "location" : undefined}
             href={item.href}
             key={item.href}
             onClick={() => setIsMenuOpen(false)}
           >
-            {item.label}
+            <span>{item.label}</span>
+            <span aria-hidden="true" className="site-nav-current-status">
+              Current
+            </span>
           </a>
         ))}
         <a

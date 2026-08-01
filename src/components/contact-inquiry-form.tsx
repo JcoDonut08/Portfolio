@@ -17,6 +17,14 @@ type ContactInquiryFormProps = {
 
 type SubmissionStatus = "idle" | "submitting" | "success" | "error";
 
+type SecurityCheckStatus =
+  | "loading"
+  | "ready"
+  | "required"
+  | "verified"
+  | "expired"
+  | "error";
+
 type TurnstileApi = {
   ready: (callback: () => void) => void;
   remove: (widgetId: string) => void;
@@ -49,6 +57,15 @@ const submitButtonLabels: Record<SubmissionStatus, string> = {
   error: "Try sending again",
 };
 
+const securityCheckMessages: Record<SecurityCheckStatus, string> = {
+  loading: "Loading the security checkâ€¦",
+  ready: "Security check ready. It will run automatically.",
+  required: "Complete the security check before sending.",
+  verified: "Security check complete.",
+  expired: "Security check expired. Retry it before sending.",
+  error: "Security check unavailable. Retry it or use email instead.",
+};
+
 const turnstileSiteKey =
   process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim() ?? "";
 
@@ -68,6 +85,8 @@ export function ContactInquiryForm({
   const [fieldErrors, setFieldErrors] = useState<ContactFieldErrors>({});
   const [turnstileToken, setTurnstileToken] = useState("");
   const [isTurnstileReady, setIsTurnstileReady] = useState(false);
+  const [securityCheckStatus, setSecurityCheckStatus] =
+    useState<SecurityCheckStatus>("loading");
   const turnstileContainerRef = useRef<HTMLDivElement>(null);
   const turnstileWidgetIdRef = useRef<string | null>(null);
 
@@ -92,16 +111,44 @@ export function ContactInquiryForm({
         return;
       }
 
-      turnstileWidgetIdRef.current = turnstile.render(container, {
-        action: "portfolio_contact",
-        appearance: "interaction-only",
-        callback: setTurnstileToken,
-        "error-callback": () => setTurnstileToken(""),
-        "expired-callback": () => setTurnstileToken(""),
-        sitekey: turnstileSiteKey,
-        size: "flexible",
-        theme: "dark",
-      });
+      try {
+        turnstileWidgetIdRef.current = turnstile.render(container, {
+          action: "portfolio_contact",
+          appearance: "interaction-only",
+          callback: (token) => {
+            if (!isActive) {
+              return;
+            }
+
+            setTurnstileToken(token);
+            setSecurityCheckStatus("verified");
+          },
+          "error-callback": () => {
+            if (!isActive) {
+              return;
+            }
+
+            setTurnstileToken("");
+            setSecurityCheckStatus("error");
+          },
+          "expired-callback": () => {
+            if (!isActive) {
+              return;
+            }
+
+            setTurnstileToken("");
+            setSecurityCheckStatus("expired");
+          },
+          sitekey: turnstileSiteKey,
+          size: "flexible",
+          theme: "dark",
+        });
+        setSecurityCheckStatus((currentStatus) =>
+          currentStatus === "loading" ? "ready" : currentStatus,
+        );
+      } catch {
+        setSecurityCheckStatus("error");
+      }
     });
 
     return () => {
@@ -113,6 +160,26 @@ export function ContactInquiryForm({
       }
     };
   }, [isTurnstileReady]);
+
+  const resetSecurityCheck = () => {
+    const turnstile = window.turnstile;
+    const widgetId = turnstileWidgetIdRef.current;
+
+    if (!turnstile || !widgetId) {
+      setSecurityCheckStatus("error");
+      return;
+    }
+
+    setTurnstileToken("");
+    setSecurityCheckStatus("loading");
+
+    try {
+      turnstile.reset(widgetId);
+      setSecurityCheckStatus("ready");
+    } catch {
+      setSecurityCheckStatus("error");
+    }
+  };
 
   const clearFieldError = (field: ContactField) => {
     setFieldErrors((currentErrors) => {
@@ -150,6 +217,15 @@ export function ContactInquiryForm({
     });
   };
 
+  const canRetrySecurityCheck = Boolean(
+    turnstileWidgetIdRef.current &&
+      (securityCheckStatus === "expired" || securityCheckStatus === "error"),
+  );
+  const securityCheckMessage =
+    securityCheckStatus === "error" && !canRetrySecurityCheck
+      ? "Security check could not load. Refresh the page or use email directly."
+      : securityCheckMessages[securityCheckStatus];
+
   const sendMessage = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -164,8 +240,13 @@ export function ContactInquiryForm({
     const formData = new FormData(form);
 
     if (turnstileSiteKey && !turnstileToken) {
-      setSubmissionStatus("error");
-      setStatusMessage("Complete the security check and try again.");
+      if (
+        securityCheckStatus !== "loading" &&
+        securityCheckStatus !== "expired" &&
+        securityCheckStatus !== "error"
+      ) {
+        setSecurityCheckStatus("required");
+      }
       return;
     }
 
@@ -220,8 +301,7 @@ export function ContactInquiryForm({
       window.clearTimeout(timeout);
 
       if (turnstileWidgetIdRef.current) {
-        window.turnstile?.reset(turnstileWidgetIdRef.current);
-        setTurnstileToken("");
+        resetSecurityCheck();
       }
     }
   };
@@ -346,16 +426,63 @@ export function ContactInquiryForm({
       {turnstileSiteKey ? (
         <>
           <Script
-            onReady={() => setIsTurnstileReady(true)}
+            onError={() => {
+              setIsTurnstileReady(false);
+              setSecurityCheckStatus("error");
+            }}
+            onReady={() => {
+              setSecurityCheckStatus("loading");
+              setIsTurnstileReady(true);
+            }}
             src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
             strategy="afterInteractive"
           />
           <div
-            aria-label="Security verification"
-            className="contact-turnstile"
-            ref={turnstileContainerRef}
-            role="group"
-          />
+            className="contact-security"
+            data-state={securityCheckStatus}
+          >
+            <div
+              aria-busy={securityCheckStatus === "loading"}
+              aria-describedby="contact-security-status"
+              aria-label="Security verification"
+              className="contact-turnstile"
+              ref={turnstileContainerRef}
+              role="group"
+            />
+            <div className="contact-security-feedback">
+              <p
+                className="contact-security-status"
+                id="contact-security-status"
+                role={
+                  securityCheckStatus === "required" ||
+                  securityCheckStatus === "expired" ||
+                  securityCheckStatus === "error"
+                    ? "alert"
+                    : "status"
+                }
+              >
+                <span aria-hidden="true" className="contact-security-indicator" />
+                <span>{securityCheckMessage}</span>
+              </p>
+              {canRetrySecurityCheck ? (
+                <button
+                  className="contact-security-action"
+                  onClick={resetSecurityCheck}
+                  type="button"
+                >
+                  Retry check
+                </button>
+              ) : null}
+              {securityCheckStatus === "error" ? (
+                <a
+                  className="contact-security-action"
+                  href={`mailto:${recipientEmail}`}
+                >
+                  Email directly
+                </a>
+              ) : null}
+            </div>
+          </div>
         </>
       ) : null}
 

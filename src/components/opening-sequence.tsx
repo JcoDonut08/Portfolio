@@ -114,6 +114,19 @@ const signatureStrokes = [
   },
 ] as const;
 
+const signatureAccentStars = [
+  { x: 82, y: 92, delay: 100, radius: 2.4, flare: 7 },
+  { x: 164, y: 70, delay: 220, radius: 3.2, flare: 12 },
+  { x: 127, y: 202, delay: 355, radius: 2.8, flare: 9 },
+  { x: 180, y: 230, delay: 460, radius: 3.3, flare: 13 },
+  { x: 369, y: 95, delay: 770, radius: 3, flare: 11 },
+  { x: 403, y: 215, delay: 1040, radius: 2.2, flare: 6 },
+  { x: 487, y: 80, delay: 1190, radius: 2.8, flare: 9 },
+  { x: 549, y: 169, delay: 1370, radius: 2.2, flare: 6 },
+  { x: 725, y: 78, delay: 1800, radius: 3, flare: 11 },
+  { x: 842, y: 164, delay: 2140, radius: 2.6, flare: 8 },
+] as const;
+
 type OpeningSequenceProps = {
   onComplete?: () => void;
 };
@@ -127,18 +140,37 @@ function SignatureConstellation() {
       viewBox="0 0 1000 300"
     >
       <defs>
-        <filter id="signature-ink-glow" x="-20%" y="-30%" width="140%" height="160%">
-          <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="1.8" />
+        <filter
+          colorInterpolationFilters="sRGB"
+          id="signature-ink-glow"
+          x="-25%"
+          y="-55%"
+          width="150%"
+          height="210%"
+        >
+          <feGaussianBlur in="SourceGraphic" result="wide-blur" stdDeviation="7" />
+          <feFlood floodColor="#075dff" floodOpacity="0.66" result="wide-color" />
+          <feComposite in="wide-color" in2="wide-blur" operator="in" result="wide-glow" />
+          <feGaussianBlur in="SourceGraphic" result="close-blur" stdDeviation="2.2" />
+          <feFlood floodColor="#4b91ff" floodOpacity="0.92" result="close-color" />
+          <feComposite in="close-color" in2="close-blur" operator="in" result="close-glow" />
           <feMerge>
-            <feMergeNode in="blur" />
+            <feMergeNode in="wide-glow" />
+            <feMergeNode in="close-glow" />
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
+        <linearGradient id="signature-line-gradient" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0" stopColor="#8ab8ff" />
+          <stop offset="0.48" stopColor="#f8fbff" />
+          <stop offset="0.76" stopColor="#79adff" />
+          <stop offset="1" stopColor="#eaf3ff" />
+        </linearGradient>
         <radialGradient id="signature-node-glow">
-          <stop offset="0" stopColor="#f5f7ff" stopOpacity="0.95" />
-          <stop offset="0.22" stopColor="#b9caff" stopOpacity="0.82" />
-          <stop offset="0.55" stopColor="#648cff" stopOpacity="0.34" />
-          <stop offset="1" stopColor="#648cff" stopOpacity="0" />
+          <stop offset="0" stopColor="#ffffff" stopOpacity="1" />
+          <stop offset="0.18" stopColor="#cfe3ff" stopOpacity="0.96" />
+          <stop offset="0.5" stopColor="#4f93ff" stopOpacity="0.58" />
+          <stop offset="1" stopColor="#075dff" stopOpacity="0" />
         </radialGradient>
       </defs>
 
@@ -156,6 +188,7 @@ function SignatureConstellation() {
                 className="splash-signature-stroke"
                 d={stroke.d}
                 pathLength={1}
+                stroke="url(#signature-line-gradient)"
                 strokeWidth={stroke.width}
                 style={
                   {
@@ -178,6 +211,36 @@ function SignatureConstellation() {
                 cy={endY}
                 r={isMajorNode ? 3.8 : 2.6}
                 style={{ "--signature-delay": `${finishDelay}ms` } as CSSProperties}
+              />
+            </g>
+          );
+        })}
+
+        {signatureAccentStars.map((star) => {
+          const starDelay = Math.round(star.delay * signatureTimeScale);
+
+          return (
+            <g
+              className="splash-signature-accent"
+              key={`${star.x}-${star.y}`}
+              style={{ "--signature-delay": `${starDelay}ms` } as CSSProperties}
+            >
+              <circle
+                className="splash-signature-accent-halo"
+                cx={star.x}
+                cy={star.y}
+                fill="url(#signature-node-glow)"
+                r={star.flare * 1.45}
+              />
+              <path
+                className="splash-signature-flare"
+                d={`M ${star.x - star.flare} ${star.y} H ${star.x + star.flare} M ${star.x} ${star.y - star.flare} V ${star.y + star.flare}`}
+              />
+              <circle
+                className="splash-signature-accent-core"
+                cx={star.x}
+                cy={star.y}
+                r={star.radius}
               />
             </g>
           );

@@ -15,6 +15,10 @@ const geistMono = Geist_Mono({
 const metadataTitle = "Jericho Salvador | Creative Developer";
 const metadataDescription =
   "A cinematic creative developer portfolio built with Next.js, Motion, and Three.js.";
+const socialPreviewImage =
+  "/assets/social/jericho-salvador-social-preview.jpg";
+const socialPreviewAlt =
+  "JPSalvador constellation signature above Jericho Paul Salvador, Creative Developer";
 
 function getMetadataBase() {
   const configuredUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
@@ -51,6 +55,15 @@ export const metadata: Metadata = {
   alternates: metadataBase ? { canonical: metadataBase } : undefined,
   openGraph: {
     description: metadataDescription,
+    images: [
+      {
+        alt: socialPreviewAlt,
+        height: 630,
+        type: "image/jpeg",
+        url: socialPreviewImage,
+        width: 1200,
+      },
+    ],
     locale: "en_US",
     siteName: "Jericho Salvador Portfolio",
     title: metadataTitle,
@@ -58,8 +71,14 @@ export const metadata: Metadata = {
     url: metadataBase,
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     description: metadataDescription,
+    images: [
+      {
+        alt: socialPreviewAlt,
+        url: socialPreviewImage,
+      },
+    ],
     title: metadataTitle,
   },
 };

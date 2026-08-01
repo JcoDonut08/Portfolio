@@ -65,6 +65,10 @@ export function ProjectsSection() {
                   <div className="project-card-content">
                     <div className="project-card-meta">
                       <p className="project-card-type">{project.type}</p>
+                      <p className="project-card-role">
+                        <span>Role</span>
+                        {project.role}
+                      </p>
                     </div>
                     <h3>{project.title}</h3>
                     <p className="project-card-description">

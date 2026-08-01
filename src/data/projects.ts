@@ -2,6 +2,7 @@ export const projects = [
   {
     title: "AgriSphere",
     type: "Agricultural marketplace",
+    role: "Frontend Developer",
     description:
       "A role-based marketplace connecting farmers and buyers through product discovery, secure ordering, seller tools, and crop forecasting.",
     stack: ["PHP", "MySQL", "Flask", "Python"],
@@ -15,6 +16,7 @@ export const projects = [
   {
     title: "Loveby_Ade",
     type: "Dessert e-commerce",
+    role: "Full-stack Developer",
     description:
       "A full-stack dessert storefront with product discovery, favorites, checkout, order tracking, promotions, and an admin workspace.",
     stack: ["Laravel", "Blade", "Tailwind CSS", "JavaScript"],
@@ -28,6 +30,7 @@ export const projects = [
   {
     title: "Portfolio",
     type: "Interactive portfolio",
+    role: "Full-stack Developer",
     description:
       "A cinematic personal portfolio combining responsive interface craft, purposeful motion, and an interactive 3D identity card.",
     stack: ["Next.js", "TypeScript", "R3F", "Motion"],

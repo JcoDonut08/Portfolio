@@ -112,7 +112,7 @@ export function HeroSection({ isActive }: HeroSectionProps) {
               Contact me <span aria-hidden="true">↓</span>
             </a>
             <a className="hero-action hero-action-secondary" href="#projects">
-              View project
+              View projects
             </a>
           </div>
           <div aria-label="Social links" className="hero-social-links">
