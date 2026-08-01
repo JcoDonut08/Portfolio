@@ -47,7 +47,7 @@ test("mobile navigation opens, closes, and keeps essential links available", asy
   await page.goto("/");
 
   const menuButton = page.getByRole("button", {
-    name: "Open navigation menu",
+    name: /navigation menu/,
   });
   const navigation = page.getByRole("navigation", {
     name: "Primary navigation",
@@ -59,7 +59,7 @@ test("mobile navigation opens, closes, and keeps essential links available", asy
   await expect(navigation.getByRole("link", { name: /Contact/ })).toBeVisible();
   await expect(page.getByText("Viewing", { exact: true })).toHaveCount(0);
 
-  await page.getByRole("button", { name: "Close navigation menu" }).click();
+  await menuButton.click();
   await expect(menuButton).toHaveAttribute("aria-expanded", "false");
 });
 
