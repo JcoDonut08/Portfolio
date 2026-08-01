@@ -8,7 +8,11 @@ import { createContactEmailContent } from "@/lib/contact-email";
 import {
   checkContactEmailRateLimit,
   checkContactRequestRateLimits,
+  isDurableContactRateLimitConfigured,
+} from "@/lib/contact-rate-limit";
+import {
   getClientIdentifier,
+  isContactProtectionConfigured,
   isTrustedContactRequest,
   verifyTurnstile,
 } from "@/lib/contact-security";
@@ -132,6 +136,21 @@ export async function POST(request: Request) {
     );
   }
 
+  if (
+    process.env.NODE_ENV === "production" &&
+    (!isContactProtectionConfigured() ||
+      !isDurableContactRateLimitConfigured())
+  ) {
+    return jsonResponse(
+      {
+        ok: false,
+        message:
+          "Contact protection is being configured. Please use the direct email option for now.",
+      },
+      503,
+    );
+  }
+
   const contentLengthHeader = request.headers.get("content-length");
   const contentLength = Number(contentLengthHeader ?? 0);
 
@@ -228,7 +247,18 @@ export async function POST(request: Request) {
   }
 
   const clientIdentifier = getClientIdentifier(request);
-  const rateLimit = checkContactRequestRateLimits(clientIdentifier);
+  const rateLimit = await checkContactRequestRateLimits(clientIdentifier);
+
+  if (!rateLimit.available) {
+    return jsonResponse(
+      {
+        ok: false,
+        message:
+          "Contact protection is temporarily unavailable. Please use the direct email option for now.",
+      },
+      503,
+    );
+  }
 
   if (!rateLimit.allowed) {
     return Response.json(
@@ -261,7 +291,20 @@ export async function POST(request: Request) {
     );
   }
 
-  const emailRateLimit = checkContactEmailRateLimit(validation.data.email);
+  const emailRateLimit = await checkContactEmailRateLimit(
+    validation.data.email,
+  );
+
+  if (!emailRateLimit.available) {
+    return jsonResponse(
+      {
+        ok: false,
+        message:
+          "Contact protection is temporarily unavailable. Please use the direct email option for now.",
+      },
+      503,
+    );
+  }
 
   if (!emailRateLimit.allowed) {
     return Response.json(

@@ -38,6 +38,11 @@ RESEND_API_KEY=re_replace_with_your_key
 CONTACT_TO_EMAIL=jerichosalvador08@gmail.com
 CONTACT_FROM_EMAIL="Jericho Portfolio <onboarding@resend.dev>"
 CONTACT_ALLOWED_ORIGINS=https://your-domain.example,https://your-project.vercel.app
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=replace_with_your_site_key
+TURNSTILE_SECRET_KEY=replace_with_your_secret_key
+TURNSTILE_ALLOWED_HOSTNAMES=your-domain.example,your-project.vercel.app
+UPSTASH_REDIS_REST_URL=https://your-database.upstash.io
+UPSTASH_REDIS_REST_TOKEN=replace_with_your_token
 ```
 
 `onboarding@resend.dev` is suitable while testing when the recipient is the
@@ -46,10 +51,11 @@ your own address, verify a domain in Resend and update `CONTACT_FROM_EMAIL`.
 
 The route validates every field, escapes user content before building the
 email, rejects oversized or cross-origin requests, uses a spam honeypot, and
-applies separate per-IP, per-email, and global per-instance request limits.
-The site also sends a Content Security Policy and browser hardening headers.
+applies separate durable per-IP, per-email, and global request limits through
+Upstash Redis. The site also sends a Content Security Policy and browser
+hardening headers.
 
-### Optional Turnstile protection
+### Required production contact protection
 
 For stronger bot protection, create a Cloudflare Turnstile widget for the
 production domains and add all three values to Vercel:
@@ -60,11 +66,25 @@ TURNSTILE_SECRET_KEY=replace_with_your_secret_key
 TURNSTILE_ALLOWED_HOSTNAMES=your-domain.example,your-project.vercel.app
 ```
 
-Set all three values together and redeploy. The public site key renders the
-widget; the secret is used only by the server to validate a single-use token.
-The API fails closed when the secret is configured but a valid token is
-missing.
+Set all three Turnstile values together and redeploy. The public site key
+renders the widget; the secret is used only by the server to validate a
+single-use token. Production requests fail closed if Turnstile is missing or
+misconfigured.
 
-The built-in limits are deliberately lightweight and reset with a serverless
-instance. For distributed protection on Vercel, also create a Firewall rate
-limit rule for `/api/contact`.
+Create an Upstash Redis database and configure its REST URL and token. The
+serverless limiter uses shared sliding windows across deployments and fails
+closed if the production rate-limit store is missing or unavailable. Local
+development keeps a bounded in-memory fallback so the form remains testable
+without production secrets.
+
+## Automated smoke tests
+
+The Playwright suite covers the loading handoff, section navigation, mobile
+menu, contact validation, and error-page recovery:
+
+```bash
+npm run test:e2e
+```
+
+Playwright starts its own temporary development server for the test run. The
+GitHub Actions workflow runs the same suite in CI.

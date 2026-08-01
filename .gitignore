@@ -20,6 +20,8 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 tmp/
+playwright-report/
+test-results/
 
 # OS/editor
 .DS_Store

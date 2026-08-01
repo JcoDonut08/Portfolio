@@ -1,4 +1,4 @@
-import { createHash, randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { isIP } from "node:net";
 
 const turnstileEndpoint =
@@ -6,34 +6,12 @@ const turnstileEndpoint =
 const turnstileAction = "portfolio_contact";
 const turnstileTimeoutMs = 8_000;
 const turnstileTokenMaxLength = 2_048;
-const rateLimitStoreMaxSize = 500;
-
-type RateLimitEntry = {
-  count: number;
-  resetAt: number;
-};
-
-type RateLimitPolicy = {
-  key: string;
-  limit: number;
-  windowMs: number;
-};
 
 type TurnstileResponse = {
   action?: string;
   hostname?: string;
   success?: boolean;
 };
-
-const globalWithContactRateLimit = globalThis as typeof globalThis & {
-  contactRateLimit?: Map<string, RateLimitEntry>;
-};
-
-const contactRateLimit =
-  globalWithContactRateLimit.contactRateLimit ??
-  new Map<string, RateLimitEntry>();
-
-globalWithContactRateLimit.contactRateLimit = contactRateLimit;
 
 function normalizeOrigin(value: string | null | undefined) {
   if (!value || value === "null") {
@@ -117,68 +95,6 @@ function getSourceOrigin(request: Request) {
   return normalizeOrigin(referer);
 }
 
-function cleanExpiredRateLimits(now: number) {
-  if (contactRateLimit.size <= rateLimitStoreMaxSize) {
-    return;
-  }
-
-  for (const [identifier, entry] of contactRateLimit) {
-    if (entry.resetAt <= now) {
-      contactRateLimit.delete(identifier);
-    }
-  }
-
-  while (contactRateLimit.size > rateLimitStoreMaxSize) {
-    const oldestIdentifier = contactRateLimit.keys().next().value;
-
-    if (typeof oldestIdentifier !== "string") {
-      break;
-    }
-
-    contactRateLimit.delete(oldestIdentifier);
-  }
-}
-
-function checkRateLimitPolicy(policy: RateLimitPolicy) {
-  const now = Date.now();
-  const currentEntry = contactRateLimit.get(policy.key);
-
-  if (!currentEntry || currentEntry.resetAt <= now) {
-    contactRateLimit.set(policy.key, {
-      count: 1,
-      resetAt: now + policy.windowMs,
-    });
-    cleanExpiredRateLimits(now);
-
-    return {
-      allowed: true,
-      retryAfter: 0,
-    };
-  }
-
-  if (currentEntry.count >= policy.limit) {
-    return {
-      allowed: false,
-      retryAfter: Math.max(
-        1,
-        Math.ceil((currentEntry.resetAt - now) / 1_000),
-      ),
-    };
-  }
-
-  currentEntry.count += 1;
-  contactRateLimit.set(policy.key, currentEntry);
-
-  return {
-    allowed: true,
-    retryAfter: 0,
-  };
-}
-
-function hashIdentifier(value: string) {
-  return createHash("sha256").update(value).digest("hex").slice(0, 32);
-}
-
 function getFirstValidIp(value: string | null) {
   if (!value) {
     return null;
@@ -220,47 +136,20 @@ export function isTrustedContactRequest(request: Request) {
   return getTargetOrigins(request).has(sourceOrigin);
 }
 
-function checkRateLimitPolicies(policies: RateLimitPolicy[]) {
-  for (const policy of policies) {
-    const result = checkRateLimitPolicy(policy);
-
-    if (!result.allowed) {
-      return result;
-    }
+export function isContactProtectionConfigured() {
+  if (process.env.NODE_ENV !== "production") {
+    return true;
   }
 
-  return {
-    allowed: true,
-    retryAfter: 0,
-  };
-}
+  const secret = process.env.TURNSTILE_SECRET_KEY?.trim();
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim();
+  const hasAllowedHostname =
+    (process.env.TURNSTILE_ALLOWED_HOSTNAMES ?? "")
+      .split(",")
+      .some((hostname) => hostname.trim().length > 0) ||
+    getConfiguredOrigins().length > 0;
 
-export function checkContactRequestRateLimits(clientIdentifier: string) {
-  const fifteenMinutes = 15 * 60 * 1_000;
-  const policies: RateLimitPolicy[] = [
-    {
-      key: `contact:ip:${hashIdentifier(clientIdentifier)}`,
-      limit: 5,
-      windowMs: fifteenMinutes,
-    },
-    {
-      key: "contact:global",
-      limit: 60,
-      windowMs: fifteenMinutes,
-    },
-  ];
-
-  return checkRateLimitPolicies(policies);
-}
-
-export function checkContactEmailRateLimit(senderEmail: string) {
-  return checkRateLimitPolicies([
-    {
-      key: `contact:email:${hashIdentifier(senderEmail)}`,
-      limit: 3,
-      windowMs: 60 * 60 * 1_000,
-    },
-  ]);
+  return Boolean(secret && siteKey && hasAllowedHostname);
 }
 
 export async function verifyTurnstile(
@@ -271,7 +160,7 @@ export async function verifyTurnstile(
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim();
 
   if (!secret && !siteKey) {
-    return true;
+    return process.env.NODE_ENV !== "production";
   }
 
   if (!secret || !siteKey) {

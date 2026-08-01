@@ -1,0 +1,568 @@
+.splash-screen {
+  --splash-night: #050713;
+  --splash-ink: #0b0f24;
+  --splash-white: #f5f7ff;
+  --splash-muted: #9da7c8;
+  --splash-blue: var(--electric-blue);
+  --splash-purple: #aa7bff;
+  isolation: isolate;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  min-height: 100dvh;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  padding: clamp(1.25rem, 3.2vw, 3rem) clamp(1.25rem, 6vw, 7rem)
+    calc(clamp(1.5rem, 4vw, 3.5rem) + env(safe-area-inset-bottom));
+  background:
+    radial-gradient(circle at 50% 50%, rgba(16, 25, 64, 0.38), transparent 45%),
+    linear-gradient(135deg, var(--splash-night) 0%, #07091a 55%, #090817 100%);
+  color: var(--splash-white);
+}
+
+.splash-screen::before,
+.splash-screen::after {
+  position: absolute;
+  z-index: -1;
+  content: "";
+  pointer-events: none;
+}
+
+.splash-screen::before {
+  inset: 1rem;
+  border: 1px solid rgba(185, 195, 255, 0.08);
+}
+
+.splash-screen::after {
+  inset: 0;
+  background: linear-gradient(110deg, transparent 25%, rgba(100, 140, 255, 0.035) 50%, transparent 75%);
+  opacity: 0.75;
+}
+
+@media (max-width: 640px) {
+  .splash-screen {
+    padding: 1.25rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom));
+  }
+
+  .splash-screen::before {
+    inset: 0.65rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Typography-led title sequence */
+.splash-title-sequence {
+  --title-night: #07080e;
+  --title-white: #f3f4f8;
+  --title-muted: #9095a5;
+  --title-blue: #6b8dff;
+  isolation: isolate;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  min-height: 100dvh;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  padding: clamp(1.25rem, 4vw, 3.5rem) clamp(1.25rem, 6vw, 7rem)
+    calc(clamp(1.5rem, 4vw, 3.5rem) + env(safe-area-inset-bottom));
+  background:
+    radial-gradient(circle at 56% 42%, rgba(58, 77, 148, 0.12), transparent 34%),
+    var(--title-night);
+  color: var(--title-white);
+}
+
+.splash-title-sequence::before,
+.splash-title-sequence::after {
+  content: none;
+}
+
+.splash-light-leak,
+.splash-light-sweep {
+  position: absolute;
+  pointer-events: none;
+}
+
+.splash-light-leak {
+  top: -24%;
+  right: -20%;
+  z-index: -2;
+  width: 78vw;
+  height: 150%;
+  background: linear-gradient(
+    106deg,
+    transparent 41%,
+    rgba(98, 126, 255, 0.08) 49%,
+    rgba(154, 121, 255, 0.12) 52%,
+    transparent 60%
+  );
+  filter: blur(18px);
+  opacity: 0.72;
+  transform: rotate(-8deg);
+  animation: splash-leak-drift 15s ease-in-out infinite alternate;
+}
+
+.splash-light-sweep {
+  top: -20%;
+  left: -35%;
+  z-index: 0;
+  width: 30vw;
+  height: 140%;
+  background: linear-gradient(90deg, transparent, rgba(130, 153, 255, 0.12), transparent);
+  filter: blur(12px);
+  opacity: 0;
+  transform: rotate(10deg);
+}
+
+.is-mounted .splash-light-sweep {
+  animation: splash-title-sweep 5.8s var(--ease-out-expo) forwards;
+}
+
+@keyframes splash-title-sweep {
+  0% {
+    opacity: 0;
+    transform: translateX(0) rotate(10deg);
+  }
+  16% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(480%) rotate(10deg);
+  }
+}
+
+@keyframes splash-leak-drift {
+  from {
+    transform: translate3d(0, 0, 0) rotate(-8deg);
+  }
+  to {
+    transform: translate3d(-4%, 3%, 0) rotate(-5deg);
+  }
+}
+
+@media (max-width: 640px) {
+  .splash-title-sequence {
+    padding-right: 1.25rem;
+    padding-left: 1.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash-light-leak,
+  .splash-light-sweep {
+    animation: none;
+  }
+}
+
+.splash-title-sequence {
+  transition: opacity 620ms ease, transform 780ms var(--ease-out-expo);
+}
+
+.splash-title-sequence.is-exiting {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(1.015);
+}
+
+.portfolio-experience {
+  height: 100dvh;
+  min-height: 100dvh;
+  overflow: hidden;
+  background: #07080e;
+}
+
+.hero-section {
+  --hero-bg: #07080e;
+  --hero-ink: #f3f4f8;
+  --hero-muted: #989dac;
+  --hero-line: rgba(243, 244, 248, 0.14);
+  --hero-blue: #6b8dff;
+  position: relative;
+  height: 100dvh;
+  min-height: 100dvh;
+  overflow: hidden;
+  padding: clamp(1.25rem, 3.2vw, 3rem) clamp(1.25rem, 5vw, 6rem)
+    calc(clamp(1.5rem, 3vw, 3rem) + env(safe-area-inset-bottom));
+  background:
+    radial-gradient(circle at 82% 34%, rgba(92, 116, 255, 0.09), transparent 26rem),
+    var(--hero-bg);
+  color: var(--hero-ink);
+  font-family: var(--font-geist-sans), "Segoe UI", sans-serif;
+  opacity: 0;
+  transform: scale(0.985);
+  transition: opacity 850ms ease, transform 1s var(--ease-out-expo);
+}
+
+.hero-section::before {
+  content: none;
+}
+
+.hero-section.is-active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.hero-nav {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  min-height: 3.25rem;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.hero-logo {
+  display: grid;
+  width: 2.65rem;
+  height: 2.65rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid var(--hero-ink);
+  border-radius: 50%;
+  color: var(--hero-ink);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.hero-logo:hover {
+  background: var(--hero-ink);
+  color: var(--hero-bg);
+}
+
+.hero-name {
+  color: var(--hero-ink);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+.hero-nav-links {
+  display: flex;
+  margin-left: auto;
+  gap: clamp(0.85rem, 2.2vw, 2.25rem);
+}
+
+.hero-nav-links a {
+  color: var(--hero-muted);
+  transition: color 180ms ease;
+}
+
+.hero-nav-links a:hover,
+.hero-nav-links a[aria-current="location"] {
+  color: var(--hero-ink);
+}
+
+.hero-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  min-height: calc(100dvh - clamp(5.75rem, 9vw, 7rem));
+  grid-template-columns: minmax(0, 1fr) minmax(24rem, 0.84fr);
+  align-items: center;
+  gap: clamp(2rem, 7vw, 8rem);
+  max-width: 92rem;
+  margin: 0 auto;
+}
+
+.hero-copy {
+  max-width: 47rem;
+  padding-bottom: clamp(2rem, 7vh, 5rem);
+}
+
+.hero-intro {
+  margin: 0 0 1.25rem;
+  color: var(--hero-muted);
+  font-size: clamp(0.8rem, 1.1vw, 0.95rem);
+  letter-spacing: 0.06em;
+}
+
+.hero-copy h1 {
+  margin: 0;
+  font-family: Arial Narrow, Bahnschrift, "Segoe UI", sans-serif;
+  font-size: clamp(3.85rem, 9.2vw, 8.8rem);
+  font-stretch: condensed;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 0.83;
+  text-transform: uppercase;
+}
+
+.hero-copy h1 span {
+  display: block;
+}
+
+.hero-copy h1 span:last-child {
+  padding-left: clamp(0.5rem, 5vw, 4rem);
+  color: rgba(243, 244, 248, 0.72);
+}
+
+.hero-role {
+  display: flex;
+  align-items: center;
+  min-height: 2rem;
+  margin: clamp(1.75rem, 4vw, 3rem) 0 0;
+  color: var(--hero-muted);
+  font-size: clamp(1rem, 2vw, 1.35rem);
+  letter-spacing: -0.02em;
+}
+
+.hero-role > span:first-of-type {
+  margin-left: 0.35em;
+  color: var(--hero-blue);
+}
+
+.hero-caret {
+  width: 1px;
+  height: 1.2em;
+  margin-left: 0.28em;
+  background: var(--hero-blue);
+  animation: hero-caret-blink 900ms steps(1, end) infinite;
+}
+
+.hero-summary {
+  max-width: 36rem;
+  margin: 1.35rem 0 0;
+  color: var(--hero-muted);
+  font-size: clamp(0.95rem, 1.25vw, 1.08rem);
+  line-height: 1.75;
+}
+
+@keyframes hero-caret-blink {
+  0%,
+  48% {
+    opacity: 1;
+  }
+  49%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero-nav {
+    gap: 0.6rem;
+  }
+
+  .hero-nav-links {
+    gap: 1rem;
+  }
+
+  .hero-grid {
+    display: flex;
+    min-height: auto;
+    flex-direction: column;
+    align-items: stretch;
+    padding: clamp(4rem, 10vw, 6rem) 0 0;
+  }
+
+  .hero-copy {
+    position: relative;
+    z-index: 2;
+    display: block;
+    order: 0;
+    color: var(--hero-ink);
+    opacity: 1;
+    visibility: visible;
+    padding-bottom: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-section {
+    padding: 1rem 1rem calc(1.5rem + env(safe-area-inset-bottom));
+  }
+
+  .hero-section::before {
+    inset: 0.5rem;
+  }
+
+  .hero-nav {
+    flex-wrap: wrap;
+    font-size: 0.62rem;
+  }
+
+  .hero-name {
+    font-size: 0.59rem;
+  }
+
+  .hero-nav-links {
+    width: 100%;
+    order: 3;
+    margin: 0.85rem 0 0;
+    padding-bottom: 0.85rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .hero-nav-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hero-nav-links a {
+    flex: 0 0 auto;
+  }
+
+  .hero-grid {
+    padding-top: 3.25rem;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(3.3rem, 16vw, 5.6rem);
+  }
+
+  .hero-copy h1 span:last-child {
+    padding-left: 1.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-section,
+  .splash-title-sequence {
+    transition: none;
+  }
+
+  .hero-caret {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* Intentional entry control: the completed splash waits for a conscious handoff. */
+
+/* The entry screen is intentionally one word: interaction is communicated by the frame. */
+
+/* A scanline opens the next scene; it replaces the earlier ripple handoff. */
+
+.splash-title-sequence.is-exiting {
+  opacity: 1;
+  clip-path: inset(0 0 100% 0);
+  pointer-events: none;
+  transform: none;
+  transition: clip-path 680ms var(--ease-out-expo);
+}
+
+/* The strap is deliberately visible from the top edge to the interactive ID. */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .splash-title-sequence.is-exiting {
+    clip-path: inset(0 0 100% 0);
+    transition: none;
+  }
+}
+
+/* Identity-verification pass: a single scan travels through the handoff. */
+
+.splash-title-sequence.is-exiting {
+  clip-path: inset(0);
+  filter: blur(8px);
+  opacity: 0;
+  transform: scale(1.012);
+  transition: opacity 370ms ease, filter 430ms ease, transform 500ms var(--ease-out-expo);
+}
+
+/* Remove the disconnected decorative strap; the Three.js rope is now the strap. */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .splash-title-sequence.is-exiting {
+    filter: none;
+    transition: none;
+  }
+}
+
+/* Navigation gets its own colored plane, instead of disappearing into the hero. */
+.hero-nav {
+  z-index: 4;
+  min-height: 4rem;
+  padding: 0.55rem 0.85rem;
+  background: #10142b;
+  border-bottom: 1px solid rgba(116, 142, 255, 0.48);
+  box-shadow: 0 0.6rem 1.8rem rgba(3, 5, 15, 0.24);
+}
+
+.hero-logo {
+  border-color: #93aaff;
+  background: #6b8dff;
+  color: #090b15;
+}
+
+.hero-logo:hover {
+  background: #dce4ff;
+  color: #090b15;
+}
+
+.hero-name {
+  color: #eef1ff;
+}
+
+.hero-nav-links a {
+  position: relative;
+  padding: 0.65rem 0.15rem;
+  color: #adbbf5;
+}
+
+.hero-nav-links a::after {
+  position: absolute;
+  right: 0;
+  bottom: 0.15rem;
+  left: 0;
+  height: 1px;
+  background: #8fa8ff;
+  box-shadow: 0 0 0.7rem rgba(143, 168, 255, 0.72);
+  content: "";
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 260ms var(--ease-out-expo);
+}
+
+.hero-nav-links a:hover,
+.hero-nav-links a[aria-current="location"] {
+  color: #ffffff;
+}
+
+.hero-nav-links a:hover::after,
+.hero-nav-links a[aria-current="location"]::after {
+  transform: scaleX(1);
+}
+
+/* On larger screens the lanyard is an object hanging from the viewport top. */
+@media (min-width: 901px) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hero-copy {
+    position: relative;
+    z-index: 2;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero-nav {
+    min-height: 3.4rem;
+  }
+}
+
+/* Loading rail: one continuous signal with independent corner metadata. */
+
+/* Final entry state: a small system label, one decisive word, one clear action. */

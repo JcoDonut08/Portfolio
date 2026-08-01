@@ -37,6 +37,7 @@ The hero is immersive and asymmetrical: copy sits in the foreground while the an
 ## Components
 
 - `OpeningSequence`: lightweight SVG signature intro over the celestial field.
-- `HeroScene`: dynamically loaded React Three Fiber canvas.
-- `AnimatedHome`: client-side orchestration for Motion and page sections.
-- `SiteHeader`: sticky navigation with high contrast and direct section links.
+- `PortfolioExperience`: client-side opening handoff and page-section orchestration.
+- `PortfolioCard`: accessible interactive identity card shared by Hero and About.
+- `SkillsOrbitScene`: viewport-deferred React Three Fiber technology orbit.
+- `SiteNavigation`: sticky navigation with active-section feedback and direct links.

@@ -1,0 +1,85 @@
+/* Projects: each case study reads as a captured transmission, not a card grid. */
+.projects-section {
+  position: relative;
+  z-index: 1;
+  overflow: clip;
+  padding:
+    clamp(6rem, 10vw, 9rem)
+    max(clamp(1rem, 5vw, 5rem), env(safe-area-inset-left))
+    clamp(6.5rem, 11vw, 10rem);
+  scroll-margin-top: var(--site-nav-clearance);
+}
+
+.projects-section::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(rgba(124, 151, 233, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124, 151, 233, 0.035) 1px, transparent 1px);
+  background-size: 4.5rem 4.5rem;
+  content: "";
+  mask-image: linear-gradient(to bottom, transparent, black 16%, black 86%, transparent);
+  pointer-events: none;
+}
+
+.projects-shell {
+  width: min(100%, 82rem);
+  margin-inline: auto;
+}
+
+.projects-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(17rem, 0.7fr);
+  align-items: end;
+  gap: clamp(2rem, 6vw, 7rem);
+}
+
+.projects-heading h2 {
+  margin: 0;
+  color: #f5f7ff;
+  font-family: Arial Narrow, Bahnschrift, "Segoe UI", sans-serif;
+  font-size: clamp(3.5rem, 8.6vw, 8rem);
+  font-stretch: condensed;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 0.82;
+  text-transform: uppercase;
+}
+
+.projects-heading h2 span {
+  display: block;
+  padding-left: clamp(1.5rem, 7vw, 6rem);
+  color: #7d8aad;
+}
+
+.projects-intro {
+  max-width: 27rem;
+  margin: 0 0 0.4rem;
+  color: #aeb9d8;
+  font-size: clamp(0.95rem, 1.4vw, 1.08rem);
+  line-height: 1.8;
+}
+
+.projects-list {
+  margin-top: clamp(4.5rem, 9vw, 8rem);
+}
+
+.motion-ready [data-reveal="projects-heading"],
+.motion-ready [data-reveal="project-item"] {
+  opacity: 0;
+  transform: translateY(2.5rem);
+  transition:
+    opacity 760ms var(--ease-out-expo),
+    transform 920ms var(--ease-out-expo);
+}
+
+.motion-ready [data-reveal="project-item"] {
+  transition-delay: calc(var(--reveal-index) * 90ms);
+}
+
+.motion-ready [data-reveal="projects-heading"].is-revealed,
+.motion-ready [data-reveal="project-item"].is-revealed {
+  opacity: 1;
+  transform: none;
+}

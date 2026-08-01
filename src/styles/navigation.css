@@ -1,0 +1,82 @@
+/* Persistent navigation: introduced in the hero, retained through the full story. */
+:root {
+  --site-nav-clearance: 5rem;
+}
+
+.site-navigation {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 10;
+  min-height: var(--site-nav-clearance);
+  padding:
+    max(0.65rem, env(safe-area-inset-top))
+    max(clamp(1rem, 5vw, 6rem), env(safe-area-inset-right))
+    0.65rem
+    max(clamp(1rem, 5vw, 6rem), env(safe-area-inset-left));
+  border-bottom: 1px solid transparent;
+  background: transparent;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-1rem);
+  transition:
+    background-color 240ms ease,
+    border-color 240ms ease,
+    opacity 420ms ease,
+    transform 520ms var(--ease-out-expo);
+}
+
+.site-navigation.is-active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+}
+
+.site-navigation.is-scrolled {
+  border-bottom-color: rgba(178, 194, 255, 0.16);
+  background: rgba(5, 7, 19, 0.96);
+}
+
+.hero-section {
+  grid-template-rows: minmax(0, 1fr);
+  padding-top: var(--site-nav-clearance);
+  scroll-margin-top: var(--site-nav-clearance);
+}
+
+.about-section,
+.education-section {
+  scroll-margin-top: var(--site-nav-clearance);
+}
+
+@media (max-width: 640px) {
+  :root {
+    --site-nav-clearance: 4.5rem;
+  }
+
+  .site-navigation {
+    flex-wrap: nowrap;
+    align-items: center;
+    padding-block:
+      max(0.5rem, env(safe-area-inset-top))
+      0.5rem;
+  }
+
+  .site-navigation .hero-name {
+    display: none;
+  }
+
+  .site-navigation .hero-nav-links {
+    width: auto;
+    order: initial;
+    margin: 0 0 0 auto;
+    padding-bottom: 0;
+    overflow: visible;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-navigation {
+    transition: none;
+  }
+}
