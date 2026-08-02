@@ -35,20 +35,20 @@ type OrbitInstrumentProps = Omit<
 
 const ORBIT_CONFIGURATION = {
   inner: {
-    ambientSpeed: 0.055,
+    ambientSpeed: 0.054,
     color: "#D8B06A",
-    radius: 1.72,
-    rotationFactor: 0.82,
-    tilt: 0.72,
+    radius: 1.5,
+    rotationFactor: 0.84,
+    tilt: 0.58,
     yaw: -0.18,
   },
   outer: {
-    ambientSpeed: 0.032,
+    ambientSpeed: 0.022,
     color: "#789CFF",
-    radius: 2.78,
+    radius: 3.08,
     rotationFactor: 1,
-    tilt: 0.96,
-    yaw: 0.14,
+    tilt: 0.78,
+    yaw: 0.16,
   },
 } as const;
 
@@ -116,12 +116,14 @@ function BrandIcon({ skill }: { skill: Skill }) {
 function SkillNode({
   onSelect,
   onRotate,
+  orbit,
   position,
   selected,
   skill,
 }: {
   onSelect: SkillsOrbitSceneProps["onSelect"];
   onRotate: SkillsOrbitSceneProps["onRotate"];
+  orbit: Skill["orbit"];
   position: [number, number, number];
   selected: boolean;
   skill: Skill;
@@ -143,6 +145,8 @@ function SkillNode({
           aria-label={`${skill.name}, ${skill.category}`}
           aria-pressed={selected}
           className="skills-node"
+          data-orbit={orbit}
+          data-size={skill.size}
           onClick={() => onSelect(skill.id)}
           onFocus={() => onSelect(skill.id)}
           onKeyDown={(event) => {
@@ -250,6 +254,7 @@ function OrbitPlane({
           key={skill.id}
           onRotate={onRotate}
           onSelect={onSelect}
+          orbit={orbit}
           position={getOrbitPosition(skill.angle, configuration.radius)}
           selected={skill.id === selectedId}
           skill={skill}
@@ -358,7 +363,7 @@ function OrbitInstrument({
   const instrumentRef = useRef<THREE.Group>(null);
   const viewportWidth = useThree((state) => state.size.width);
   const scale =
-    viewportWidth < 430 ? 0.64 : viewportWidth < 760 ? 0.78 : 0.88;
+    viewportWidth < 430 ? 0.6 : viewportWidth < 760 ? 0.76 : 0.86;
 
   useFrame(({ clock, pointer }, delta) => {
     if (!instrumentRef.current) {

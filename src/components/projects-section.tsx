@@ -179,6 +179,7 @@ export function ProjectsSection() {
             aria-roledescription="carousel"
             className="projects-rotator-stage"
             data-dragging="false"
+            id="projects-rotator-stage"
             onKeyDown={handleKeyDown}
             onPointerCancel={(event) => finishDrag(event, false)}
             onPointerDown={handlePointerDown}
@@ -267,6 +268,42 @@ export function ProjectsSection() {
                 </article>
               );
             })}
+          </div>
+          <div
+            aria-label="Project carousel controls"
+            className="projects-rotator-controls"
+            role="group"
+          >
+            <button
+              aria-controls="projects-rotator-stage"
+              aria-label="Show previous project"
+              className="projects-rotator-control"
+              onClick={() => rotateProjects(-1)}
+              type="button"
+            >
+              <svg aria-hidden="true" viewBox="0 0 24 24">
+                <path d="m14.5 5-7 7 7 7" />
+              </svg>
+            </button>
+            <div aria-hidden="true" className="projects-rotator-dots">
+              {projects.map((project, index) => (
+                <span
+                  data-active={index === activeIndex ? "true" : "false"}
+                  key={project.title}
+                />
+              ))}
+            </div>
+            <button
+              aria-controls="projects-rotator-stage"
+              aria-label="Show next project"
+              className="projects-rotator-control"
+              onClick={() => rotateProjects(1)}
+              type="button"
+            >
+              <svg aria-hidden="true" viewBox="0 0 24 24">
+                <path d="m9.5 5 7 7-7 7" />
+              </svg>
+            </button>
           </div>
           <p aria-atomic="true" aria-live="polite" className="projects-rotator-announcement">
             {projects[activeIndex].title} is centered. Project {activeIndex + 1}

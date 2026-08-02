@@ -1,6 +1,7 @@
 import {
   siCss,
   siFigma,
+  siFlutter,
   siGit,
   siHtml5,
   siJavascript,
@@ -23,6 +24,7 @@ export const skills = [
       "Component-driven interfaces with reusable state, clear composition, and responsive interaction.",
     angle: 0,
     orbit: "outer",
+    size: "large",
   },
   {
     id: "typescript",
@@ -31,8 +33,9 @@ export const skills = [
     category: "Language",
     description:
       "Type-safe application code that keeps components, data, and interactions dependable as projects grow.",
-    angle: 34,
+    angle: 51.43,
     orbit: "outer",
+    size: "medium",
   },
   {
     id: "javascript",
@@ -41,8 +44,9 @@ export const skills = [
     category: "Language",
     description:
       "Modern browser logic for interactive experiences, animation systems, and application behavior.",
-    angle: 68,
+    angle: 102.86,
     orbit: "outer",
+    size: "medium",
   },
   {
     id: "git",
@@ -51,8 +55,9 @@ export const skills = [
     category: "Tooling",
     description:
       "Structured version control for focused commits, safe collaboration, and reliable delivery.",
-    angle: 105,
-    orbit: "outer",
+    angle: 25.71,
+    orbit: "inner",
+    size: "small",
   },
   {
     id: "three",
@@ -61,8 +66,9 @@ export const skills = [
     category: "Creative development",
     description:
       "Interactive 3D scenes and visual systems that bring depth, motion, and atmosphere to the browser.",
-    angle: 145,
+    angle: 154.29,
     orbit: "outer",
+    size: "medium",
   },
   {
     id: "figma",
@@ -71,8 +77,9 @@ export const skills = [
     category: "Design",
     description:
       "Interface exploration, component planning, and visual systems shaped before they reach production.",
-    angle: 185,
-    orbit: "outer",
+    angle: 77.14,
+    orbit: "inner",
+    size: "small",
   },
   {
     id: "tailwind",
@@ -81,8 +88,9 @@ export const skills = [
     category: "Styling",
     description:
       "Utility-led styling for fast iteration while preserving responsive rules and consistent design tokens.",
-    angle: 225,
-    orbit: "outer",
+    angle: 128.57,
+    orbit: "inner",
+    size: "medium",
   },
   {
     id: "next",
@@ -91,8 +99,31 @@ export const skills = [
     category: "Framework",
     description:
       "Production React applications with deliberate rendering, routing, performance, and asset handling.",
-    angle: 270,
+    angle: 205.71,
     orbit: "outer",
+    size: "large",
+  },
+  {
+    id: "react-native",
+    name: "React Native",
+    icon: siReact,
+    category: "Mobile framework",
+    description:
+      "Cross-platform mobile applications using React patterns, native components, and shared TypeScript logic.",
+    angle: 257.14,
+    orbit: "outer",
+    size: "medium",
+  },
+  {
+    id: "flutter",
+    name: "Flutter",
+    icon: siFlutter,
+    category: "Mobile framework",
+    description:
+      "Cross-platform mobile interfaces shaped from a shared Dart codebase with responsive, platform-aware UI.",
+    angle: 308.57,
+    orbit: "outer",
+    size: "large",
   },
   {
     id: "laravel",
@@ -101,8 +132,9 @@ export const skills = [
     category: "Backend",
     description:
       "Structured PHP applications with expressive routing, data workflows, and maintainable server logic.",
-    angle: 42,
+    angle: 180,
     orbit: "inner",
+    size: "medium",
   },
   {
     id: "php",
@@ -111,8 +143,9 @@ export const skills = [
     category: "Backend",
     description:
       "Server-side features, form processing, and database-backed experiences built for the web.",
-    angle: 128,
+    angle: 231.43,
     orbit: "inner",
+    size: "small",
   },
   {
     id: "css",
@@ -121,8 +154,9 @@ export const skills = [
     category: "Styling",
     description:
       "Responsive layouts, accessible states, and purposeful motion tuned across screen sizes.",
-    angle: 218,
+    angle: 282.86,
     orbit: "inner",
+    size: "small",
   },
   {
     id: "html",
@@ -131,8 +165,9 @@ export const skills = [
     category: "Foundation",
     description:
       "Semantic, accessible structure that gives every interface a durable foundation.",
-    angle: 310,
+    angle: 334.29,
     orbit: "inner",
+    size: "small",
   },
 ] as const;
 
