@@ -1876,3 +1876,163 @@
     transition: none;
   }
 }
+
+/* Project rotator: three visible transmissions orbit around one hidden card. */
+.projects-rotator {
+  width: 100%;
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.projects-rotator-instructions,
+.projects-rotator-announcement {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.projects-rotator-stage {
+  --projects-drag-tilt: 0deg;
+  --projects-drag-x: 0px;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  width: 100%;
+  align-items: start;
+  padding: clamp(1rem, 2vw, 1.75rem) 0 clamp(2rem, 4vw, 3.5rem);
+  overflow: clip;
+  cursor: grab;
+  perspective: 100rem;
+  perspective-origin: 50% 42%;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.projects-rotator-stage[data-dragging="true"] {
+  cursor: grabbing;
+}
+
+.projects-rotator-stage:focus-visible {
+  outline: 2px solid #a9beff;
+  outline-offset: 0.35rem;
+}
+
+.projects-rotator-stage .project-showcase-card {
+  grid-area: 1 / 1;
+  width: calc(33.333333% - 0.666667rem);
+  min-width: 0;
+  justify-self: center;
+  transform-origin: center;
+  transition:
+    filter 420ms ease,
+    opacity 280ms ease,
+    transform 620ms var(--ease-out-expo),
+    visibility 0s linear 0s;
+}
+
+.projects-rotator-stage[data-dragging="true"] .project-showcase-card {
+  transition: none;
+}
+
+.projects-rotator-stage
+  .project-showcase-card[data-carousel-position="center"] {
+  z-index: 4;
+  filter:
+    brightness(1) saturate(1)
+    drop-shadow(0 1.25rem 1rem rgba(0, 0, 0, 0.34));
+  opacity: 1;
+  transform:
+    translate3d(var(--projects-drag-x), 0, 1rem)
+    rotateY(var(--projects-drag-tilt))
+    scale(1.015);
+  visibility: visible;
+}
+
+.projects-rotator-stage
+  .project-showcase-card[data-carousel-position="left"] {
+  z-index: 2;
+  filter:
+    brightness(0.78) saturate(0.8)
+    drop-shadow(0 1rem 0.8rem rgba(0, 0, 0, 0.3));
+  opacity: 0.86;
+  transform:
+    translate3d(calc(-104% + var(--projects-drag-x)), 1rem, -5rem)
+    rotateY(calc(16deg + var(--projects-drag-tilt)))
+    scale(0.94);
+  visibility: visible;
+}
+
+.projects-rotator-stage
+  .project-showcase-card[data-carousel-position="right"] {
+  z-index: 2;
+  filter:
+    brightness(0.78) saturate(0.8)
+    drop-shadow(0 1rem 0.8rem rgba(0, 0, 0, 0.3));
+  opacity: 0.86;
+  transform:
+    translate3d(calc(104% + var(--projects-drag-x)), 1rem, -5rem)
+    rotateY(calc(-16deg + var(--projects-drag-tilt)))
+    scale(0.94);
+  visibility: visible;
+}
+
+.projects-rotator-stage
+  .project-showcase-card[data-carousel-position="back"] {
+  z-index: 0;
+  filter: brightness(0.5) saturate(0.6);
+  opacity: 0;
+  pointer-events: none;
+  transform:
+    translate3d(var(--projects-drag-x), 1.5rem, -18rem)
+    rotateY(calc(42deg + var(--projects-drag-tilt)))
+    scale(0.78);
+  visibility: hidden;
+}
+
+@media (max-width: 980px) {
+  .projects-rotator-stage .project-showcase-card {
+    width: min(calc(100% - 2rem), 46rem);
+    max-width: none;
+  }
+
+  .projects-rotator-stage
+    .project-showcase-card[data-carousel-position="left"] {
+    opacity: 0.72;
+    transform:
+      translate3d(calc(-88% + var(--projects-drag-x)), 1rem, -6rem)
+      rotateY(calc(28deg + var(--projects-drag-tilt)))
+      scale(0.88);
+  }
+
+  .projects-rotator-stage
+    .project-showcase-card[data-carousel-position="right"] {
+    opacity: 0.72;
+    transform:
+      translate3d(calc(88% + var(--projects-drag-x)), 1rem, -6rem)
+      rotateY(calc(-28deg + var(--projects-drag-tilt)))
+      scale(0.88);
+  }
+}
+
+@media (max-width: 640px) {
+  .projects-rotator {
+    margin-top: 0.75rem;
+  }
+
+  .projects-rotator-stage {
+    margin-inline: -0.25rem;
+    width: calc(100% + 0.5rem);
+    padding-top: 0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .projects-rotator-stage .project-showcase-card {
+    transition: none;
+  }
+}

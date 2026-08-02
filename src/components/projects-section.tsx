@@ -1,17 +1,155 @@
+"use client";
+
 import Image from "next/image";
-import type { CSSProperties } from "react";
+import {
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+  type PointerEvent,
+} from "react";
 
 import { projects } from "@/data/projects";
 
 const projectAccents = {
   amber: "#f2b84b",
   cyan: "#32e6e2",
+  green: "#6fd08c",
   magenta: "#ff4d8d",
 } as const;
 
-const cardPositions = ["left", "center", "right"] as const;
+type CarouselPosition = "back" | "center" | "left" | "right";
+
+type DragState = {
+  currentX: number;
+  pointerId: number;
+  startX: number;
+};
+
+function getCarouselPosition(
+  projectIndex: number,
+  activeIndex: number,
+): CarouselPosition {
+  const offset =
+    (projectIndex - activeIndex + projects.length) % projects.length;
+
+  if (offset === 0) {
+    return "center";
+  }
+
+  if (offset === 1) {
+    return "right";
+  }
+
+  if (offset === projects.length - 1) {
+    return "left";
+  }
+
+  return "back";
+}
 
 export function ProjectsSection() {
+  const [activeIndex, setActiveIndex] = useState(1);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const dragStateRef = useRef<DragState | null>(null);
+
+  const rotateProjects = (direction: -1 | 1) => {
+    setActiveIndex(
+      (current) =>
+        (current + direction + projects.length) % projects.length,
+    );
+  };
+
+  const resetDragStyles = () => {
+    const stage = stageRef.current;
+
+    if (!stage) {
+      return;
+    }
+
+    stage.dataset.dragging = "false";
+    stage.style.setProperty("--projects-drag-x", "0px");
+    stage.style.setProperty("--projects-drag-tilt", "0deg");
+  };
+
+  const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    const target = event.target;
+
+    if (
+      !event.isPrimary ||
+      event.button !== 0 ||
+      (target instanceof Element && target.closest("a"))
+    ) {
+      return;
+    }
+
+    dragStateRef.current = {
+      currentX: event.clientX,
+      pointerId: event.pointerId,
+      startX: event.clientX,
+    };
+    event.currentTarget.dataset.dragging = "true";
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    const dragState = dragStateRef.current;
+
+    if (!dragState || dragState.pointerId !== event.pointerId) {
+      return;
+    }
+
+    const stage = event.currentTarget;
+    const dragLimit = stage.clientWidth * 0.22;
+    const distance = event.clientX - dragState.startX;
+    const clampedDistance = Math.max(
+      -dragLimit,
+      Math.min(dragLimit, distance),
+    );
+    const tilt = (clampedDistance / stage.clientWidth) * -14;
+
+    dragState.currentX = event.clientX;
+    stage.style.setProperty("--projects-drag-x", `${clampedDistance}px`);
+    stage.style.setProperty("--projects-drag-tilt", `${tilt}deg`);
+  };
+
+  const finishDrag = (event: PointerEvent<HTMLDivElement>, rotate: boolean) => {
+    const dragState = dragStateRef.current;
+
+    if (!dragState || dragState.pointerId !== event.pointerId) {
+      return;
+    }
+
+    const distance = dragState.currentX - dragState.startX;
+    const threshold = Math.min(
+      92,
+      Math.max(42, event.currentTarget.clientWidth * 0.1),
+    );
+
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+
+    dragStateRef.current = null;
+    resetDragStyles();
+
+    if (rotate && Math.abs(distance) >= threshold) {
+      rotateProjects(distance < 0 ? 1 : -1);
+    }
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      rotateProjects(-1);
+    }
+
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      rotateProjects(1);
+    }
+  };
+
   return (
     <section
       aria-labelledby="projects-title"
@@ -19,94 +157,121 @@ export function ProjectsSection() {
       id="projects"
     >
       <div className="projects-shell">
-        <header
-          className="projects-heading"
-          data-reveal="projects-heading"
-        >
+        <header className="projects-heading" data-reveal="projects-heading">
           <span aria-hidden="true" className="projects-heading-orbit" />
           <h2 id="projects-title">
             Projects <span>in orbit.</span>
           </h2>
           <p className="projects-intro">
-            Three real builds, each with its own system, story, and visual
+            Four real builds, each with its own system, story, and visual
             gravity.
           </p>
         </header>
 
-        <div className="projects-list">
-          {projects.map((project, index) => {
-            const cardPosition = cardPositions[index] ?? "center";
+        <div className="projects-rotator">
+          <p className="projects-rotator-instructions" id="projects-rotator-instructions">
+            Drag left or right to rotate projects. Use the left and right arrow
+            keys for keyboard navigation.
+          </p>
+          <div
+            aria-describedby="projects-rotator-instructions"
+            aria-label="Project gallery"
+            aria-roledescription="carousel"
+            className="projects-rotator-stage"
+            data-dragging="false"
+            onKeyDown={handleKeyDown}
+            onPointerCancel={(event) => finishDrag(event, false)}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={(event) => finishDrag(event, true)}
+            ref={stageRef}
+            role="region"
+            tabIndex={0}
+          >
+            {projects.map((project, index) => {
+              const position = getCarouselPosition(index, activeIndex);
 
-            return (
-              <article
-                className={`project-showcase-card project-showcase-card--${cardPosition}`}
-                data-reveal="project-item"
-                key={project.title}
-                style={
-                  {
-                    "--project-accent": projectAccents[project.accent],
-                    "--reveal-index": index,
-                  } as CSSProperties
-                }
-              >
-                <div className="project-card-surface">
-                  <div className="project-card-media">
-                    <div className="project-card-visual">
-                      <Image
-                        alt={project.imageAlt}
-                        className="project-card-image"
-                        fill
-                        sizes="(max-width: 640px) calc(100vw - 3rem), (max-width: 980px) calc(100vw - 6rem), (max-width: 1280px) 28vw, 25rem"
-                        src={project.imageSrc}
-                      />
+              return (
+                <article
+                  aria-current={position === "center" ? "true" : undefined}
+                  aria-hidden={position === "back" ? true : undefined}
+                  aria-label={`${project.title}, project ${index + 1} of ${projects.length}`}
+                  aria-roledescription="slide"
+                  className="project-showcase-card"
+                  data-carousel-position={position}
+                  inert={position === "back" ? true : undefined}
+                  key={project.title}
+                  style={
+                    {
+                      "--project-accent": projectAccents[project.accent],
+                    } as CSSProperties
+                  }
+                >
+                  <div className="project-card-surface">
+                    <div className="project-card-media">
+                      <div className="project-card-visual">
+                        <Image
+                          alt={project.imageAlt}
+                          className="project-card-image"
+                          draggable={false}
+                          fill
+                          sizes="(max-width: 980px) 82vw, (max-width: 1280px) 30vw, 25rem"
+                          src={project.imageSrc}
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="project-card-content">
-                    <div className="project-card-meta">
-                      <p className="project-card-type">{project.type}</p>
-                      <p className="project-card-role">
-                        <span>Role</span>
-                        {project.role}
+                    <div className="project-card-content">
+                      <div className="project-card-meta">
+                        <p className="project-card-type">{project.type}</p>
+                        <p className="project-card-role">
+                          <span>Role</span>
+                          {project.role}
+                        </p>
+                      </div>
+                      <h3>{project.title}</h3>
+                      <p className="project-card-description">
+                        {project.description}
                       </p>
-                    </div>
-                    <h3>{project.title}</h3>
-                    <p className="project-card-description">
-                      {project.description}
-                    </p>
 
-                    <div className="project-card-stack">
-                      <p>Tech stack</p>
-                      <ul aria-label={`${project.title} technology stack`}>
-                        {project.stack.map((item) => (
-                          <li key={item}>{item}</li>
-                        ))}
-                      </ul>
-                    </div>
+                      <div className="project-card-stack">
+                        <p>Tech stack</p>
+                        <ul aria-label={`${project.title} technology stack`}>
+                          {project.stack.map((item) => (
+                            <li key={item}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
 
-                    <a
-                      aria-label={`View ${project.title} on GitHub`}
-                      className="project-github-link"
-                      href={project.repoUrl}
-                      rel="noreferrer"
-                      target="_blank"
-                    >
-                      <span className="project-github-copy">
-                        View repository
-                        <small>{project.repoName}</small>
-                      </span>
-                      <span
-                        aria-hidden="true"
-                        className="project-github-arrow"
+                      <a
+                        aria-label={`View ${project.title} on GitHub`}
+                        className="project-github-link"
+                        href={project.repoUrl}
+                        rel="noreferrer"
+                        tabIndex={position === "center" ? 0 : -1}
+                        target="_blank"
                       >
-                        ↗
-                      </span>
-                    </a>
+                        <span className="project-github-copy">
+                          View repository
+                          <small>{project.repoName}</small>
+                        </span>
+                        <span
+                          aria-hidden="true"
+                          className="project-github-arrow"
+                        >
+                          ↗
+                        </span>
+                      </a>
+                    </div>
                   </div>
-                </div>
-              </article>
-            );
-          })}
+                </article>
+              );
+            })}
+          </div>
+          <p aria-atomic="true" aria-live="polite" className="projects-rotator-announcement">
+            {projects[activeIndex].title} is centered. Project {activeIndex + 1}
+            of {projects.length}.
+          </p>
         </div>
       </div>
     </section>

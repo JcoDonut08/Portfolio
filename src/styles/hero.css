@@ -2926,3 +2926,152 @@ body {
     transform: scale(1.18);
   }
 }
+
+/* The hero handoff resolves the identity card from the surrounding celestial signal. */
+.hero-card-wrap {
+  --hero-card-entry-blur: 7px;
+  --hero-card-entry-delay: 140ms;
+  --hero-card-entry-duration: 820ms;
+  --hero-card-entry-squeeze: 46%;
+  --hero-card-entry-y: 1.6rem;
+  --hero-card-orbit-opacity: 0.72;
+}
+
+.hero-card-wrap::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  width: min(100%, clamp(20rem, 30vw, 27rem));
+  aspect-ratio: 0.77;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(100, 140, 255, 0.06) 30%,
+    rgba(216, 229, 255, 0.58) 50%,
+    rgba(100, 140, 255, 0.08) 70%,
+    transparent 100%
+  );
+  box-shadow: 0 0 2rem rgba(100, 140, 255, 0.14);
+  clip-path: inset(0 48%);
+  content: "";
+  mix-blend-mode: screen;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.hero-section.is-active .hero-card-wrap .portfolio-card {
+  animation: hero-card-signal-resolve var(--hero-card-entry-duration)
+    var(--ease-out-expo) var(--hero-card-entry-delay) backwards;
+}
+
+.hero-section.is-active .hero-card-wrap::before {
+  animation: hero-card-orbit-lock 720ms var(--ease-out-expo) 60ms backwards;
+}
+
+.hero-section.is-active .hero-card-wrap::after {
+  animation: hero-card-signal-sweep 760ms var(--ease-out-expo) 180ms both;
+}
+
+@keyframes hero-card-signal-resolve {
+  from {
+    clip-path: inset(0 var(--hero-card-entry-squeeze));
+    filter: blur(var(--hero-card-entry-blur)) brightness(1.65);
+    opacity: 0;
+    transform: translate3d(0, var(--hero-card-entry-y), 0) rotateY(-14deg)
+      rotateZ(-1.5deg) scale(0.92);
+  }
+
+  42% {
+    clip-path: inset(0 18%);
+    opacity: 0.88;
+  }
+
+  to {
+    clip-path: inset(0);
+    filter:
+      blur(0) brightness(1)
+      drop-shadow(0 1.7rem 1.8rem rgba(0, 0, 0, 0.46))
+      drop-shadow(0 0 1.6rem rgba(55, 93, 219, 0.12));
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotateY(0) rotateZ(0) scale(1);
+  }
+}
+
+@keyframes hero-card-orbit-lock {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scaleY(0.06) rotate(-22deg);
+  }
+
+  to {
+    opacity: var(--hero-card-orbit-opacity);
+    transform: translate(-50%, -50%) scaleY(0.62) rotate(-22deg);
+  }
+}
+
+@keyframes hero-card-signal-sweep {
+  0%,
+  12% {
+    clip-path: inset(0 48%);
+    opacity: 0;
+  }
+
+  34% {
+    opacity: 0.86;
+  }
+
+  78% {
+    clip-path: inset(0 -4%);
+    opacity: 0.34;
+  }
+
+  100% {
+    clip-path: inset(0 -4%);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-card-wrap {
+    --hero-card-entry-blur: 2px;
+    --hero-card-entry-delay: 60ms;
+    --hero-card-entry-duration: 680ms;
+    --hero-card-entry-squeeze: 42%;
+    --hero-card-entry-y: 0.9rem;
+    --hero-card-orbit-opacity: 0.58;
+  }
+
+  .hero-card-wrap::after {
+    width: 100%;
+    box-shadow: 0 0 1rem rgba(100, 140, 255, 0.12);
+  }
+
+  .hero-section.is-active .hero-card-wrap::before {
+    animation-duration: 560ms;
+  }
+
+  .hero-section.is-active .hero-card-wrap::after {
+    animation-duration: 620ms;
+    animation-delay: 90ms;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 900px) and (min-height: 700px) {
+  .hero-card-wrap {
+    bottom: -4.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-section.is-active .hero-card-wrap .portfolio-card,
+  .hero-section.is-active .hero-card-wrap::before,
+  .hero-section.is-active .hero-card-wrap::after {
+    animation: none;
+  }
+
+  .hero-card-wrap::after {
+    display: none;
+  }
+}
