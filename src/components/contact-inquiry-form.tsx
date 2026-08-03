@@ -26,7 +26,6 @@ type SecurityCheckStatus =
   | "error";
 
 type TurnstileApi = {
-  ready: (callback: () => void) => void;
   remove: (widgetId: string) => void;
   render: (
     container: HTMLElement,
@@ -106,50 +105,44 @@ export function ContactInquiryForm({
 
     let isActive = true;
 
-    turnstile.ready(() => {
-      if (!isActive || turnstileWidgetIdRef.current) {
-        return;
-      }
+    try {
+      turnstileWidgetIdRef.current = turnstile.render(container, {
+        action: "portfolio_contact",
+        appearance: "interaction-only",
+        callback: (token) => {
+          if (!isActive) {
+            return;
+          }
 
-      try {
-        turnstileWidgetIdRef.current = turnstile.render(container, {
-          action: "portfolio_contact",
-          appearance: "interaction-only",
-          callback: (token) => {
-            if (!isActive) {
-              return;
-            }
+          setTurnstileToken(token);
+          setSecurityCheckStatus("verified");
+        },
+        "error-callback": () => {
+          if (!isActive) {
+            return;
+          }
 
-            setTurnstileToken(token);
-            setSecurityCheckStatus("verified");
-          },
-          "error-callback": () => {
-            if (!isActive) {
-              return;
-            }
+          setTurnstileToken("");
+          setSecurityCheckStatus("error");
+        },
+        "expired-callback": () => {
+          if (!isActive) {
+            return;
+          }
 
-            setTurnstileToken("");
-            setSecurityCheckStatus("error");
-          },
-          "expired-callback": () => {
-            if (!isActive) {
-              return;
-            }
-
-            setTurnstileToken("");
-            setSecurityCheckStatus("expired");
-          },
-          sitekey: turnstileSiteKey,
-          size: "flexible",
-          theme: "dark",
-        });
-        setSecurityCheckStatus((currentStatus) =>
-          currentStatus === "loading" ? "ready" : currentStatus,
-        );
-      } catch {
-        setSecurityCheckStatus("error");
-      }
-    });
+          setTurnstileToken("");
+          setSecurityCheckStatus("expired");
+        },
+        sitekey: turnstileSiteKey,
+        size: "flexible",
+        theme: "dark",
+      });
+      setSecurityCheckStatus((currentStatus) =>
+        currentStatus === "loading" ? "ready" : currentStatus,
+      );
+    } catch {
+      setSecurityCheckStatus("error");
+    }
 
     return () => {
       isActive = false;

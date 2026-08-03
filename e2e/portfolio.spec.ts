@@ -8,6 +8,45 @@ async function skipOpeningSequence(page: Page) {
   }, openingSequenceSkipKey);
 }
 
+test.beforeEach(async ({ page }) => {
+  await page.route(
+    "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit",
+    async (route) => {
+      await route.fulfill({
+        body: `
+          window.turnstile = {
+            ready() {
+              throw new Error("turnstile.ready() must not be used with an asynchronously loaded script");
+            },
+            render(_container, options) {
+              window.setTimeout(() => options.callback("test-turnstile-token"), 0);
+              return "test-turnstile-widget";
+            },
+            remove() {},
+            reset() {},
+          };
+        `,
+        contentType: "application/javascript",
+        status: 200,
+      });
+    },
+  );
+});
+
+test("Turnstile initializes without crashing the portfolio", async ({ page }) => {
+  const pageErrors: string[] = [];
+  page.on("pageerror", (error) => pageErrors.push(error.message));
+
+  await skipOpeningSequence(page);
+  await page.goto("/#contact");
+
+  await expect(page.getByText("Security check complete.")).toBeVisible();
+  await expect(
+    page.getByRole("heading", { level: 1, name: /Jericho Paul Salvador/i }),
+  ).toBeVisible();
+  expect(pageErrors).toEqual([]);
+});
+
 test("opening sequence hands off to the portfolio", async ({ page }) => {
   await page.goto("/");
 

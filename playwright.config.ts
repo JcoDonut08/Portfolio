@@ -26,7 +26,7 @@ export default defineConfig({
   webServer: {
     command: `npm run dev -- --hostname 127.0.0.1 --port ${testPort}`,
     env: {
-      NEXT_PUBLIC_TURNSTILE_SITE_KEY: "",
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: "test-turnstile-site-key",
       PLAYWRIGHT_TEST: "1",
       TURNSTILE_SECRET_KEY: "",
       UPSTASH_REDIS_REST_TOKEN: "",
