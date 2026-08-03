@@ -1,8 +1,6 @@
 import {
   siCss,
-  siFigma,
   siFlutter,
-  siGit,
   siHtml5,
   siJavascript,
   siLaravel,
@@ -49,17 +47,6 @@ export const skills = [
     size: "medium",
   },
   {
-    id: "git",
-    name: "Git",
-    icon: siGit,
-    category: "Tooling",
-    description:
-      "Structured version control for focused commits, safe collaboration, and reliable delivery.",
-    angle: 25.71,
-    orbit: "inner",
-    size: "small",
-  },
-  {
     id: "three",
     name: "Three.js",
     icon: siThreedotjs,
@@ -71,24 +58,13 @@ export const skills = [
     size: "medium",
   },
   {
-    id: "figma",
-    name: "Figma",
-    icon: siFigma,
-    category: "Design",
-    description:
-      "Interface exploration, component planning, and visual systems shaped before they reach production.",
-    angle: 77.14,
-    orbit: "inner",
-    size: "small",
-  },
-  {
     id: "tailwind",
     name: "Tailwind CSS",
     icon: siTailwindcss,
     category: "Styling",
     description:
       "Utility-led styling for fast iteration while preserving responsive rules and consistent design tokens.",
-    angle: 128.57,
+    angle: 0,
     orbit: "inner",
     size: "medium",
   },
@@ -132,7 +108,7 @@ export const skills = [
     category: "Backend",
     description:
       "Structured PHP applications with expressive routing, data workflows, and maintainable server logic.",
-    angle: 180,
+    angle: 72,
     orbit: "inner",
     size: "medium",
   },
@@ -143,7 +119,7 @@ export const skills = [
     category: "Backend",
     description:
       "Server-side features, form processing, and database-backed experiences built for the web.",
-    angle: 231.43,
+    angle: 144,
     orbit: "inner",
     size: "small",
   },
@@ -154,7 +130,7 @@ export const skills = [
     category: "Styling",
     description:
       "Responsive layouts, accessible states, and purposeful motion tuned across screen sizes.",
-    angle: 282.86,
+    angle: 216,
     orbit: "inner",
     size: "small",
   },
@@ -165,7 +141,7 @@ export const skills = [
     category: "Foundation",
     description:
       "Semantic, accessible structure that gives every interface a durable foundation.",
-    angle: 334.29,
+    angle: 288,
     orbit: "inner",
     size: "small",
   },

@@ -11,6 +11,7 @@ import {
 } from "react";
 
 import { skills, type SkillId } from "@/components/skills-data";
+import { WorkflowTools } from "@/components/workflow-tools";
 
 const SkillsOrbitScene = dynamic(
   () =>
@@ -196,6 +197,8 @@ export function SkillsSection() {
           </div>
         </div>
       </div>
+
+      <WorkflowTools />
     </section>
   );
 }
