@@ -6,9 +6,11 @@ import {
   useState,
   type CSSProperties,
   type KeyboardEvent,
+  type MouseEvent,
   type PointerEvent,
 } from "react";
 
+import { AgriSphereCaseStudyDialog } from "@/components/agrisphere-case-study-dialog";
 import { projects } from "@/data/projects";
 
 const projectAccents = {
@@ -50,6 +52,9 @@ function getCarouselPosition(
 
 export function ProjectsSection() {
   const [activeIndex, setActiveIndex] = useState(1);
+  const [isAgriSphereOpen, setIsAgriSphereOpen] = useState(false);
+  const agriSphereTriggerRef = useRef<HTMLButtonElement>(null);
+  const didDragRef = useRef(false);
   const stageRef = useRef<HTMLDivElement>(null);
   const dragStateRef = useRef<DragState | null>(null);
 
@@ -78,11 +83,12 @@ export function ProjectsSection() {
     if (
       !event.isPrimary ||
       event.button !== 0 ||
-      (target instanceof Element && target.closest("a"))
+      (target instanceof Element && target.closest("a, button"))
     ) {
       return;
     }
 
+    didDragRef.current = false;
     dragStateRef.current = {
       currentX: event.clientX,
       pointerId: event.pointerId,
@@ -109,6 +115,11 @@ export function ProjectsSection() {
     const tilt = (clampedDistance / stage.clientWidth) * -14;
 
     dragState.currentX = event.clientX;
+
+    if (Math.abs(distance) > 6) {
+      didDragRef.current = true;
+    }
+
     stage.style.setProperty("--projects-drag-x", `${clampedDistance}px`);
     stage.style.setProperty("--projects-drag-tilt", `${tilt}deg`);
   };
@@ -136,6 +147,29 @@ export function ProjectsSection() {
     if (rotate && Math.abs(distance) >= threshold) {
       rotateProjects(distance < 0 ? 1 : -1);
     }
+
+    requestAnimationFrame(() => {
+      didDragRef.current = false;
+    });
+  };
+
+  const handleProjectCardClick = (
+    event: MouseEvent<HTMLElement>,
+    projectTitle: string,
+    position: CarouselPosition,
+  ) => {
+    const target = event.target;
+
+    if (
+      projectTitle !== "AgriSphere" ||
+      position !== "center" ||
+      didDragRef.current ||
+      (target instanceof Element && target.closest("a, button"))
+    ) {
+      return;
+    }
+
+    setIsAgriSphereOpen(true);
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -200,8 +234,12 @@ export function ProjectsSection() {
                   aria-roledescription="slide"
                   className="project-showcase-card"
                   data-carousel-position={position}
+                  data-has-case-study={project.title === "AgriSphere" ? "true" : undefined}
                   inert={position === "back" ? true : undefined}
                   key={project.title}
+                  onClick={(event) =>
+                    handleProjectCardClick(event, project.title, position)
+                  }
                   style={
                     {
                       "--project-accent": projectAccents[project.accent],
@@ -220,6 +258,22 @@ export function ProjectsSection() {
                           src={project.imageSrc}
                         />
                       </div>
+                      {project.title === "AgriSphere" ? (
+                        <button
+                          aria-label="Open the AgriSphere case study"
+                          className="project-case-study-trigger"
+                          disabled={position !== "center"}
+                          onClick={() => setIsAgriSphereOpen(true)}
+                          ref={agriSphereTriggerRef}
+                          tabIndex={position === "center" ? 0 : -1}
+                          type="button"
+                        >
+                          Explore case study
+                          <svg aria-hidden="true" viewBox="0 0 24 24">
+                            <path d="M7 17 17 7M9 7h8v8" />
+                          </svg>
+                        </button>
+                      ) : null}
                     </div>
 
                     <div className="project-card-content">
@@ -311,6 +365,11 @@ export function ProjectsSection() {
           </p>
         </div>
       </div>
+      <AgriSphereCaseStudyDialog
+        isOpen={isAgriSphereOpen}
+        onClose={() => setIsAgriSphereOpen(false)}
+        returnFocusRef={agriSphereTriggerRef}
+      />
     </section>
   );
 }

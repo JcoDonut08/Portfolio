@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { AboutSection } from "@/components/about-section";
 import { ContactSection } from "@/components/contact-section";
+import { CursorConstellation } from "@/components/cursor-constellation";
 import { EducationSection } from "@/components/education-section";
 import { HeroSection } from "@/components/hero-section";
 import { OpeningSequence } from "@/components/opening-sequence";
@@ -74,6 +75,7 @@ export function PortfolioExperience() {
         <div aria-hidden="true" className="scroll-progress">
           <span />
         </div>
+        <CursorConstellation isActive={hasEntered} />
         <main>
           <HeroSection isActive={hasEntered} />
           <ProjectsSection />

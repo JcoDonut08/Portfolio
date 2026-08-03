@@ -65,6 +65,83 @@ body {
     linear-gradient(180deg, transparent 68%, rgba(2, 3, 9, 0.34));
 }
 
+.cursor-constellation {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  width: 100vw;
+  height: 100dvh;
+  contain: strict;
+  color: #dce4ff;
+  mix-blend-mode: screen;
+  opacity: 0;
+  overflow: visible;
+  pointer-events: none;
+  transition: opacity 160ms ease;
+}
+
+.cursor-constellation[data-active="true"] {
+  opacity: 0.88;
+}
+
+.cursor-shooting-star-tail {
+  fill: none;
+  stroke: url("#cursor-shooting-star-tail-gradient");
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cursor-shooting-star-tail--glow {
+  opacity: 0.42;
+  stroke-width: 9;
+}
+
+.cursor-shooting-star-tail--body {
+  opacity: 0.44;
+  stroke-width: 3.2;
+}
+
+.cursor-shooting-star-tail--core {
+  opacity: 0.94;
+  stroke-width: 1;
+}
+
+.cursor-shooting-star-particle > circle {
+  fill: #9db3ff;
+}
+
+.cursor-shooting-star-particle--warm > circle {
+  fill: #ff78a8;
+}
+
+.cursor-shooting-star-head .cursor-shooting-star-head-halo {
+  fill: url("#cursor-shooting-star-head-gradient");
+}
+
+.cursor-shooting-star-head path {
+  fill: #f8ffff;
+  stroke: #b8fffd;
+  stroke-linejoin: round;
+  stroke-width: 0.8;
+  vector-effect: non-scaling-stroke;
+}
+
+.cursor-shooting-star-head .cursor-shooting-star-head-core {
+  fill: #ffffff;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .portfolio-content {
+    cursor: crosshair;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .cursor-constellation {
+    display: none;
+  }
+}
+
 .hero-section,
 .about-section,
 .site-footer {
@@ -315,6 +392,10 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .cursor-constellation {
+    display: none;
+  }
+
   .scroll-progress {
     display: none;
   }

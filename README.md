@@ -1,90 +1,150 @@
-# Portfolio
+# Jericho Salvador — Creative Developer Portfolio
 
-A personal portfolio built with Next.js, React, TypeScript, and Tailwind CSS.
+[![Portfolio checks](https://github.com/JcoDonut08/Portfolio/actions/workflows/portfolio-checks.yml/badge.svg)](https://github.com/JcoDonut08/Portfolio/actions/workflows/portfolio-checks.yml)
 
-## Tech Stack
+A cinematic, celestial-themed portfolio for Jericho Salvador, a creative developer focused on expressive interfaces, purposeful motion, and polished digital experiences.
 
-- Next.js
-- React
+![Jericho Salvador portfolio homepage](./public/assets/projects/portfolio-homepage.png)
+
+## Highlights
+
+- Animated constellation signature opening sequence
+- Responsive project-first portfolio layout
+- Active-section navigation for desktop and mobile
+- Interactive 3D technology orbit with keyboard support
+- Animated, reversible celestial identity card
+- Project previews with repository links
+- Accessible contact form with inline validation and clear status messages
+- Custom unavailable, not-found, and application error pages
+- Social-sharing metadata and a branded preview image
+- Reduced-motion, keyboard, and mobile-responsive support
+
+## Technology
+
+- Next.js 15 and React 19
 - TypeScript
-- Tailwind CSS
+- React Three Fiber, Drei, and Three.js
+- Motion
+- Tailwind CSS and modular CSS
+- Resend for contact email delivery
+- Cloudflare Turnstile for bot protection
+- Upstash Redis for distributed rate limiting
+- Playwright for end-to-end testing
+- GitHub Actions for continuous verification
+
+## Local development
+
+### Requirements
+
+- Node.js 22
 - npm
-- Git + GitHub
 
-## Getting Started
-
-Install dependencies:
+Install the locked dependencies:
 
 ```bash
-npm install
+npm ci
 ```
 
-Run the development server:
+Copy `.env.example` to `.env.local` if you want to test the contact service, then start the development server:
 
 ```bash
 npm run dev
 ```
 
-Open `http://localhost:3000` in your browser.
+Open [http://localhost:3000](http://localhost:3000).
 
-## Contact Email Backend
+The portfolio interface can run locally without production contact credentials. Local contact rate limiting uses a bounded in-memory fallback, but email delivery and Turnstile require their corresponding credentials.
 
-The contact form posts to the server-side `/api/contact` route and sends the
-message through the Resend REST API. Copy `.env.example` to `.env.local`, then
-set:
+## Environment variables
 
-```bash
-RESEND_API_KEY=re_replace_with_your_key
-CONTACT_TO_EMAIL=jerichosalvador08@gmail.com
-CONTACT_FROM_EMAIL="Jericho Portfolio <onboarding@resend.dev>"
-CONTACT_ALLOWED_ORIGINS=https://your-domain.example,https://your-project.vercel.app
-NEXT_PUBLIC_TURNSTILE_SITE_KEY=replace_with_your_site_key
-TURNSTILE_SECRET_KEY=replace_with_your_secret_key
-TURNSTILE_ALLOWED_HOSTNAMES=your-domain.example,your-project.vercel.app
-UPSTASH_REDIS_REST_URL=https://your-database.upstash.io
-UPSTASH_REDIS_REST_TOKEN=replace_with_your_token
-```
+Never commit real keys or tokens. Store local values in `.env.local` and production values in the Vercel project settings.
 
-`onboarding@resend.dev` is suitable while testing when the recipient is the
-email address associated with the Resend account. For production delivery from
-your own address, verify a domain in Resend and update `CONTACT_FROM_EMAIL`.
+| Variable | Production | Purpose |
+| --- | --- | --- |
+| `RESEND_API_KEY` | Required | Authorizes server-side contact email delivery. |
+| `CONTACT_TO_EMAIL` | Required | Receives new portfolio inquiries. |
+| `CONTACT_FROM_EMAIL` | Required | Verified sender used by Resend. |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Required | Public Turnstile widget key. |
+| `TURNSTILE_SECRET_KEY` | Required | Server-only Turnstile verification key. |
+| `TURNSTILE_ALLOWED_HOSTNAMES` | Required | Comma-separated hostnames allowed to submit the form. |
+| `UPSTASH_REDIS_REST_URL` | Required | Upstash Redis REST endpoint for shared rate limits. |
+| `UPSTASH_REDIS_REST_TOKEN` | Required | Server-only Upstash REST token. |
+| `NEXT_PUBLIC_SITE_URL` | Recommended | Production URL used for canonical and social metadata. |
+| `CONTACT_ALLOWED_ORIGINS` | Recommended | Additional custom or preview origins allowed to call the contact API. |
 
-The route validates every field, escapes user content before building the
-email, rejects oversized or cross-origin requests, uses a spam honeypot, and
-applies separate durable per-IP, per-email, and global request limits through
-Upstash Redis. The site also sends a Content Security Policy and browser
-hardening headers.
+For initial Resend testing, `onboarding@resend.dev` can deliver only to the email associated with the Resend account. Verify a sending domain before delivering to other recipients.
 
-### Required production contact protection
+## Contact security
 
-For stronger bot protection, create a Cloudflare Turnstile widget for the
-production domains and add all three values to Vercel:
+The `/api/contact` route applies layered protection:
 
-```bash
-NEXT_PUBLIC_TURNSTILE_SITE_KEY=replace_with_your_site_key
-TURNSTILE_SECRET_KEY=replace_with_your_secret_key
-TURNSTILE_ALLOWED_HOSTNAMES=your-domain.example,your-project.vercel.app
-```
+- Server-side validation and request-size limits
+- Origin checks for cross-site request protection
+- Escaped user content before email HTML is generated
+- Honeypot spam detection
+- Cloudflare Turnstile token and hostname verification
+- Durable per-IP, per-email, and global sliding-window limits through Upstash
+- Fail-closed production behavior when Turnstile or Upstash is unavailable
+- Content Security Policy and restrictive browser security headers
 
-Set all three Turnstile values together and redeploy. The public site key
-renders the widget; the secret is used only by the server to validate a
-single-use token. Production requests fail closed if Turnstile is missing or
-misconfigured.
+No website can be guaranteed impossible to attack. These controls reduce common risks, while secrets must remain in the deployment provider rather than the repository.
 
-Create an Upstash Redis database and configure its REST URL and token. The
-serverless limiter uses shared sliding windows across deployments and fails
-closed if the production rate-limit store is missing or unavailable. Local
-development keeps a bounded in-memory fallback so the form remains testable
-without production secrets.
-
-## Automated smoke tests
-
-The Playwright suite covers the loading handoff, section navigation, mobile
-menu, contact validation, and error-page recovery:
+## Quality checks
 
 ```bash
+npm run lint
+npm run build
 npm run test:e2e
 ```
 
-Playwright starts its own temporary development server for the test run. The
-GitHub Actions workflow runs the same suite in CI.
+The Playwright suite verifies:
+
+- Opening-sequence handoff
+- Project navigation and active-section state
+- Mobile navigation behavior
+- Accessible contact validation
+- Error-page return behavior
+- Horizontal overflow at phone, tablet, and desktop widths
+
+Playwright starts a temporary development server during `npm run test:e2e`. To list the tests without starting a server, run:
+
+```bash
+npm run test:e2e:list
+```
+
+Every push to `main` and every pull request runs dependency installation, linting, a production build, and all eight browser smoke tests through GitHub Actions.
+
+## Deploying to Vercel
+
+1. Import this GitHub repository into Vercel.
+2. Keep the detected Next.js framework and standard build settings.
+3. Use Node.js 22 for consistency with continuous integration.
+4. Add the production environment variables listed above.
+5. Include the Vercel hostname and custom domain in the Turnstile widget configuration and the allowed-hostname variables.
+6. Deploy again after adding or changing environment variables.
+
+The application does not require a `vercel.json` file. Without the production contact credentials, the visual portfolio can deploy, but the contact API intentionally returns an unavailable response.
+
+## Project structure
+
+```text
+src/app/          Pages, metadata, error boundaries, and the contact API
+src/components/   Portfolio sections and reusable interface components
+src/data/         Project content
+src/hooks/        Navigation and scroll-reveal behavior
+src/lib/          Contact security, email, and shared site utilities
+src/styles/       Section-focused responsive styles
+e2e/              Playwright browser tests
+public/assets/    Profile, project, résumé, and social-preview assets
+```
+
+## Attribution
+
+The zodiac field adapts astronomical geometry and Western constellation line conventions from Marc van der Sluys's [ConstellationLines](https://github.com/MarcvdSluys/ConstellationLines) dataset under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). See [ATTRIBUTIONS.md](./ATTRIBUTIONS.md) for details.
+
+## Author
+
+Jericho Salvador — Creative Developer
+
+- [GitHub](https://github.com/JcoDonut08)
+- [Email](mailto:jerichosalvador08@gmail.com)

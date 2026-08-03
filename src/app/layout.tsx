@@ -11,6 +11,7 @@ import "@/styles/skills.css";
 import "@/styles/projects.css";
 import "@/styles/contact.css";
 import "@/styles/responsive-refinements.css";
+import "@/styles/project-case-study.css";
 import "@/styles/system-pages.css";
 
 const geistSans = Geist({

@@ -39,6 +39,36 @@ test("project navigation updates the URL and current section", async ({
   ).toHaveAttribute("aria-current", "location");
 });
 
+test("AgriSphere opens as a detailed, keyboard-accessible case study", async ({
+  page,
+}) => {
+  await skipOpeningSequence(page);
+  await page.goto("/#projects");
+
+  const gallery = page.getByRole("region", { name: "Project gallery" });
+  await gallery.focus();
+  await page.keyboard.press("ArrowLeft");
+
+  const trigger = page.getByRole("button", {
+    name: "Open the AgriSphere case study",
+  });
+  await trigger.focus();
+  await page.keyboard.press("Enter");
+
+  const dialog = page.getByRole("dialog", { name: "AgriSphere" });
+  await expect(dialog).toBeVisible();
+  await expect(
+    dialog.getByRole("heading", { name: "A closer look at the interface." }),
+  ).toBeVisible();
+  await expect(
+    dialog.getByRole("link", { name: "View repository" }),
+  ).toHaveAttribute("href", "https://github.com/JcoDonut08/AgriSphere-Grp9");
+
+  await page.keyboard.press("Escape");
+  await expect(dialog).not.toBeVisible();
+  await expect(trigger).toBeFocused();
+});
+
 test("mobile navigation opens, closes, and keeps essential links available", async ({
   page,
 }) => {
