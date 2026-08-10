@@ -8,6 +8,15 @@ async function skipOpeningSequence(page: Page) {
   }, openingSequenceSkipKey);
 }
 
+async function useHardwareProfile(page: Page, hardwareConcurrency: number) {
+  await page.addInitScript((threadCount) => {
+    Object.defineProperty(window.navigator, "hardwareConcurrency", {
+      configurable: true,
+      get: () => threadCount,
+    });
+  }, hardwareConcurrency);
+}
+
 test.beforeEach(async ({ page }) => {
   await page.route(
     "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit",
@@ -48,12 +57,27 @@ test("Turnstile initializes without crashing the portfolio", async ({ page }) =>
 });
 
 test("opening sequence hands off to the portfolio", async ({ page }) => {
+  await useHardwareProfile(page, 8);
   await page.goto("/");
 
   await expect(page.locator(".splash-screen")).toBeVisible();
   await expect(page.locator(".splash-screen")).toHaveCount(0, {
     timeout: 6_000,
   });
+  await expect(
+    page.getByRole("heading", { level: 1, name: /Jericho Paul Salvador/i }),
+  ).toBeVisible();
+});
+
+test("low-power devices skip the opening sequence", async ({ page }) => {
+  await useHardwareProfile(page, 4);
+  await page.goto("/");
+
+  await expect(page.locator(".splash-screen")).toHaveCount(0);
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-performance",
+    "reduced",
+  );
   await expect(
     page.getByRole("heading", { level: 1, name: /Jericho Paul Salvador/i }),
   ).toBeVisible();
