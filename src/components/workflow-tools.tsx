@@ -52,14 +52,19 @@ function WorkflowToolColumns() {
   ));
 }
 
-export function WorkflowTools() {
+type WorkflowToolsProps = {
+  disableMotion: boolean;
+};
+
+export function WorkflowTools({ disableMotion }: WorkflowToolsProps) {
   const carouselRef = useRef<HTMLDivElement>(null);
   const [isRunning, setIsRunning] = useState(false);
 
   useEffect(() => {
     const carousel = carouselRef.current;
 
-    if (!carousel) {
+    if (!carousel || disableMotion) {
+      setIsRunning(false);
       return;
     }
 
@@ -95,7 +100,7 @@ export function WorkflowTools() {
       observer.disconnect();
       document.removeEventListener("visibilitychange", syncRunningState);
     };
-  }, []);
+  }, [disableMotion]);
 
   return (
     <section

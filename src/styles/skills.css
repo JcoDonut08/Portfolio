@@ -913,6 +913,33 @@
   }
 }
 
+html[data-performance="reduced"] .skills-workflow-carousel {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-color: rgba(143, 172, 255, 0.42) transparent;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+html[data-performance="reduced"] .skills-workflow-track {
+  animation: none;
+  transform: none;
+  will-change: auto;
+}
+
+html[data-performance="reduced"]
+  .skills-workflow-set[aria-hidden="true"] {
+  display: none;
+}
+
+html[data-performance="reduced"] .skills-workflow-column {
+  scroll-snap-align: start;
+}
+
+html[data-performance="reduced"] .skills-node-logo {
+  filter: none;
+}
+
 /* The orbit is rendered in WebGL; these rules style its accessible HTML layer. */
 @media (min-width: 1051px) {
   .skills-orbit-wrap {

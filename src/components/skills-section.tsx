@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useReducedMotion } from "motion/react";
 import {
   useEffect,
   useRef,
@@ -27,30 +26,24 @@ type DragState = {
   startX: number;
 };
 
-export function SkillsSection() {
+type SkillsSectionProps = {
+  lowPowerMode: boolean;
+  prefersReducedMotion: boolean;
+};
+
+export function SkillsSection({
+  lowPowerMode,
+  prefersReducedMotion,
+}: SkillsSectionProps) {
   const [selectedId, setSelectedId] = useState<SkillId>("react");
   const [rotation, setRotation] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [isOrbitNearViewport, setIsOrbitNearViewport] = useState(false);
   const [shouldRenderOrbit, setShouldRenderOrbit] = useState(false);
-  const [lowPowerMode, setLowPowerMode] = useState(false);
   const dragState = useRef<DragState | null>(null);
   const orbitStageRef = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = Boolean(useReducedMotion());
   const selectedSkill =
     skills.find((skill) => skill.id === selectedId) ?? skills[0];
-
-  useEffect(() => {
-    const lowPowerQuery = window.matchMedia(
-      "(max-width: 700px), (pointer: coarse)",
-    );
-    const syncLowPowerMode = () => setLowPowerMode(lowPowerQuery.matches);
-
-    syncLowPowerMode();
-    lowPowerQuery.addEventListener("change", syncLowPowerMode);
-
-    return () => lowPowerQuery.removeEventListener("change", syncLowPowerMode);
-  }, []);
 
   useEffect(() => {
     const stage = orbitStageRef.current;
@@ -198,7 +191,7 @@ export function SkillsSection() {
         </div>
       </div>
 
-      <WorkflowTools />
+      <WorkflowTools disableMotion={lowPowerMode || prefersReducedMotion} />
     </section>
   );
 }

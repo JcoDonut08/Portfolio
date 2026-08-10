@@ -179,6 +179,13 @@ function projectConstellation(constellation: ZodiacConstellation) {
   };
 }
 
+const projectedZodiacConstellations = zodiacConstellations.map(
+  (constellation) => ({
+    ...constellation,
+    projected: projectConstellation(constellation),
+  }),
+);
+
 export function ZodiacField({ isActive = true, variant = "hero" }: ZodiacFieldProps) {
   return (
     <div
@@ -221,8 +228,8 @@ export function ZodiacField({ isActive = true, variant = "hero" }: ZodiacFieldPr
         </g>
 
         <g className="zodiac-constellations">
-          {zodiacConstellations.map((constellation, constellationIndex) => {
-            const projected = projectConstellation(constellation);
+          {projectedZodiacConstellations.map((constellation, constellationIndex) => {
+            const { projected } = constellation;
             const { x, y, rotation, width, height } = constellation.placement;
             const delayStep = variant === "splash" ? 18 : 90;
 

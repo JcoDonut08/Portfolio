@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import {
   useRef,
   useState,
@@ -10,8 +11,15 @@ import {
   type PointerEvent,
 } from "react";
 
-import { AgriSphereCaseStudyDialog } from "@/components/agrisphere-case-study-dialog";
 import { projects } from "@/data/projects";
+
+const AgriSphereCaseStudyDialog = dynamic(
+  () =>
+    import("@/components/agrisphere-case-study-dialog").then(
+      (module) => module.AgriSphereCaseStudyDialog,
+    ),
+  { ssr: false },
+);
 
 const projectAccents = {
   amber: "#f2b84b",
@@ -365,11 +373,13 @@ export function ProjectsSection() {
           </p>
         </div>
       </div>
-      <AgriSphereCaseStudyDialog
-        isOpen={isAgriSphereOpen}
-        onClose={() => setIsAgriSphereOpen(false)}
-        returnFocusRef={agriSphereTriggerRef}
-      />
+      {isAgriSphereOpen ? (
+        <AgriSphereCaseStudyDialog
+          isOpen
+          onClose={() => setIsAgriSphereOpen(false)}
+          returnFocusRef={agriSphereTriggerRef}
+        />
+      ) : null}
     </section>
   );
 }

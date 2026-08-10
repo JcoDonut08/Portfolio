@@ -36,29 +36,22 @@ function MailIcon() {
 }
 
 type HeroSectionProps = {
+  disableAmbientMotion: boolean;
   isActive: boolean;
 };
 
-export function HeroSection({ isActive }: HeroSectionProps) {
+export function HeroSection({
+  disableAmbientMotion,
+  isActive,
+}: HeroSectionProps) {
   const [roleIndex, setRoleIndex] = useState(0);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const syncPreference = () => setPrefersReducedMotion(mediaQuery.matches);
-
-    syncPreference();
-    mediaQuery.addEventListener("change", syncPreference);
-
-    return () => mediaQuery.removeEventListener("change", syncPreference);
-  }, []);
 
   useEffect(() => {
     if (!isActive) {
       return;
     }
 
-    if (prefersReducedMotion) {
+    if (disableAmbientMotion) {
       setRoleIndex(0);
       return;
     }
@@ -68,10 +61,10 @@ export function HeroSection({ isActive }: HeroSectionProps) {
     }, 2600);
 
     return () => window.clearTimeout(timer);
-  }, [isActive, prefersReducedMotion, roleIndex]);
+  }, [disableAmbientMotion, isActive, roleIndex]);
 
   const handleSignalPointerMove = (event: PointerEvent<HTMLElement>) => {
-    if (prefersReducedMotion || event.pointerType !== "mouse") {
+    if (disableAmbientMotion || event.pointerType !== "mouse") {
       return;
     }
 
@@ -143,7 +136,10 @@ export function HeroSection({ isActive }: HeroSectionProps) {
         </div>
 
         <div className="hero-card-wrap">
-          <PortfolioCard imageSrc="/assets/profile/jericho-paul-salvador-celestial.png" />
+          <PortfolioCard
+            disableMotion={disableAmbientMotion}
+            imageSrc="/assets/profile/jericho-paul-salvador-celestial.png"
+          />
         </div>
       </div>
     </section>

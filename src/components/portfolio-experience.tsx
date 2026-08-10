@@ -12,11 +12,23 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteNavigation } from "@/components/site-navigation";
 import { SkillsSection } from "@/components/skills-section";
 import { ZodiacField } from "@/components/zodiac-field";
+import { useAdaptivePerformance } from "@/hooks/use-adaptive-performance";
 import { useScrollReveals } from "@/hooks/use-scroll-reveals";
 
 export function PortfolioExperience() {
   const [hasEntered, setHasEntered] = useState(false);
+  const { lowPowerMode, prefersReducedMotion } = useAdaptivePerformance();
+  const disableAmbientMotion = lowPowerMode || prefersReducedMotion;
   useScrollReveals(hasEntered);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.dataset.performance = lowPowerMode ? "reduced" : "full";
+
+    return () => {
+      delete root.dataset.performance;
+    };
+  }, [lowPowerMode]);
 
   useEffect(() => {
     if (hasEntered) {
@@ -75,18 +87,31 @@ export function PortfolioExperience() {
         <div aria-hidden="true" className="scroll-progress">
           <span />
         </div>
-        <CursorConstellation isActive={hasEntered} />
+        <CursorConstellation
+          isActive={hasEntered && !disableAmbientMotion}
+        />
         <main>
-          <HeroSection isActive={hasEntered} />
+          <HeroSection
+            disableAmbientMotion={disableAmbientMotion}
+            isActive={hasEntered}
+          />
           <ProjectsSection />
-          <AboutSection />
-          <SkillsSection />
+          <AboutSection disableAmbientMotion={disableAmbientMotion} />
+          <SkillsSection
+            lowPowerMode={lowPowerMode}
+            prefersReducedMotion={prefersReducedMotion}
+          />
           <EducationSection />
           <ContactSection />
         </main>
         <SiteFooter />
       </div>
-      {hasEntered ? null : <OpeningSequence onComplete={enterExperience} />}
+      {hasEntered ? null : (
+        <OpeningSequence
+          onComplete={enterExperience}
+          skipForPerformance={disableAmbientMotion}
+        />
+      )}
     </div>
   );
 }

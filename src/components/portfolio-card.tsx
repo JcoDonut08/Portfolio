@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState, type CSSProperties, type PointerEvent } from "react";
+import { useState, type CSSProperties, type PointerEvent } from "react";
 
 type PortfolioCardProps = {
+  disableMotion?: boolean;
   imageSrc: string;
   priority?: boolean;
 };
@@ -65,23 +66,16 @@ function CompassMark() {
   );
 }
 
-export function PortfolioCard({ imageSrc, priority = true }: PortfolioCardProps) {
+export function PortfolioCard({
+  disableMotion = false,
+  imageSrc,
+  priority = true,
+}: PortfolioCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
   const [tilt, setTilt] = useState<Tilt>(restingTilt);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const syncPreference = () => setPrefersReducedMotion(mediaQuery.matches);
-
-    syncPreference();
-    mediaQuery.addEventListener("change", syncPreference);
-
-    return () => mediaQuery.removeEventListener("change", syncPreference);
-  }, []);
 
   const handlePointerMove = (event: PointerEvent<HTMLButtonElement>) => {
-    if (prefersReducedMotion || event.pointerType !== "mouse") {
+    if (disableMotion || event.pointerType !== "mouse") {
       return;
     }
 

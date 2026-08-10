@@ -65,6 +65,16 @@ body {
     linear-gradient(180deg, transparent 68%, rgba(2, 3, 9, 0.34));
 }
 
+.projects-section,
+.about-section,
+.skills-section,
+.education-section,
+.contact-section,
+.site-footer {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 64rem;
+}
+
 .cursor-constellation {
   position: fixed;
   inset: 0;
@@ -406,4 +416,26 @@ body {
     transform: none;
     transition: none;
   }
+}
+
+html[data-performance="reduced"] .cursor-constellation {
+  display: none;
+}
+
+html[data-performance="reduced"] .zodiac-sky,
+html[data-performance="reduced"] .zodiac-ambient-stars,
+html[data-performance="reduced"] .portfolio-card-back-orbit,
+html[data-performance="reduced"] .skills-workflow-track {
+  animation: none !important;
+}
+
+html[data-performance="reduced"] .zodiac-nebula,
+html[data-performance="reduced"] .zodiac-star-halo {
+  display: none;
+}
+
+html[data-performance="reduced"] .zodiac-star,
+html[data-performance="reduced"] .portfolio-card-leo,
+html[data-performance="reduced"] .portfolio-card-leo-star {
+  filter: none;
 }

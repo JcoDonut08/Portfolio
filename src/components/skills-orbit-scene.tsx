@@ -2,7 +2,7 @@
 
 import { Html, Line } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useMemo, useRef, type CSSProperties } from "react";
+import { useEffect, useMemo, useRef, type CSSProperties } from "react";
 import * as THREE from "three";
 
 import { skills, type Skill, type SkillId } from "@/components/skills-data";
@@ -20,6 +20,7 @@ type SkillsOrbitSceneProps = {
 
 type OrbitPlaneProps = {
   isDragging: boolean;
+  lowPowerMode: boolean;
   orbit: Skill["orbit"];
   onRotate: SkillsOrbitSceneProps["onRotate"];
   onSelect: SkillsOrbitSceneProps["onSelect"];
@@ -30,7 +31,7 @@ type OrbitPlaneProps = {
 
 type OrbitInstrumentProps = Omit<
   SkillsOrbitSceneProps,
-  "isVisible" | "lowPowerMode"
+  "isVisible"
 >;
 
 const ORBIT_CONFIGURATION = {
@@ -86,6 +87,42 @@ const SUN_FRAGMENT_SHADER = `
     gl_FragColor = vec4(color, 1.0);
   }
 `;
+
+function DemandFrameScheduler({
+  enabled,
+  rotation,
+  selectedId,
+}: {
+  enabled: boolean;
+  rotation: number;
+  selectedId: SkillId;
+}) {
+  const invalidate = useThree((state) => state.invalidate);
+  const remainingFrames = useRef(0);
+
+  useFrame(() => {
+    if (!enabled || remainingFrames.current <= 0) {
+      return;
+    }
+
+    remainingFrames.current -= 1;
+
+    if (remainingFrames.current > 0) {
+      invalidate();
+    }
+  });
+
+  useEffect(() => {
+    if (!enabled) {
+      return;
+    }
+
+    remainingFrames.current = 12;
+    invalidate();
+  }, [enabled, invalidate, rotation, selectedId]);
+
+  return null;
+}
 
 function getOrbitPosition(angle: number, radius: number) {
   const radians = THREE.MathUtils.degToRad(angle);
@@ -171,6 +208,7 @@ function SkillNode({
 
 function OrbitPlane({
   isDragging,
+  lowPowerMode,
   onRotate,
   onSelect,
   orbit,
@@ -195,7 +233,7 @@ function OrbitPlane({
       return;
     }
 
-    if (reducedMotion) {
+    if (reducedMotion || lowPowerMode) {
       ambientRotationRef.current = 0;
     } else if (!isDragging) {
       ambientRotationRef.current += delta * configuration.ambientSpeed;
@@ -204,7 +242,7 @@ function OrbitPlane({
     const targetRotation = THREE.MathUtils.degToRad(
       rotation * configuration.rotationFactor,
     ) + ambientRotationRef.current;
-    groupRef.current.rotation.z = reducedMotion
+    groupRef.current.rotation.z = reducedMotion || lowPowerMode
       ? targetRotation
       : THREE.MathUtils.damp(
           groupRef.current.rotation.z,
@@ -220,7 +258,14 @@ function OrbitPlane({
       rotation={[configuration.tilt, configuration.yaw, 0]}
     >
       <mesh>
-        <torusGeometry args={[configuration.radius, 0.012, 12, 192]} />
+        <torusGeometry
+          args={[
+            configuration.radius,
+            0.012,
+            lowPowerMode ? 6 : 12,
+            lowPowerMode ? 96 : 192,
+          ]}
+        />
         <meshBasicMaterial
           color={configuration.color}
           opacity={orbit === "outer" ? 0.34 : 0.5}
@@ -230,7 +275,12 @@ function OrbitPlane({
 
       <mesh rotation={[0, 0, orbit === "outer" ? 0.08 : -0.12]}>
         <torusGeometry
-          args={[configuration.radius * 0.94, 0.004, 8, 160]}
+          args={[
+            configuration.radius * 0.94,
+            0.004,
+            lowPowerMode ? 4 : 8,
+            lowPowerMode ? 80 : 160,
+          ]}
         />
         <meshBasicMaterial
           color={configuration.color}
@@ -264,7 +314,13 @@ function OrbitPlane({
   );
 }
 
-function OrbitSun({ reducedMotion }: { reducedMotion: boolean }) {
+function OrbitSun({
+  lowPowerMode,
+  reducedMotion,
+}: {
+  lowPowerMode: boolean;
+  reducedMotion: boolean;
+}) {
   const coronaRef = useRef<THREE.Mesh>(null);
   const materialRef = useRef<THREE.ShaderMaterial>(null);
   const sunRef = useRef<THREE.Group>(null);
@@ -276,9 +332,10 @@ function OrbitSun({ reducedMotion }: { reducedMotion: boolean }) {
     }
 
     const elapsed = clock.getElapsedTime();
-    materialRef.current.uniforms.uTime.value = reducedMotion ? 0 : elapsed;
+    materialRef.current.uniforms.uTime.value =
+      reducedMotion || lowPowerMode ? 0 : elapsed;
 
-    if (reducedMotion) {
+    if (reducedMotion || lowPowerMode) {
       sunRef.current.rotation.set(0.18, -0.22, 0);
       coronaRef.current.scale.setScalar(1.14);
       return;
@@ -299,7 +356,9 @@ function OrbitSun({ reducedMotion }: { reducedMotion: boolean }) {
   return (
     <group ref={sunRef}>
       <mesh>
-        <sphereGeometry args={[0.72, 56, 56]} />
+        <sphereGeometry
+          args={[0.72, lowPowerMode ? 28 : 56, lowPowerMode ? 28 : 56]}
+        />
         <shaderMaterial
           fragmentShader={SUN_FRAGMENT_SHADER}
           ref={materialRef}
@@ -309,7 +368,7 @@ function OrbitSun({ reducedMotion }: { reducedMotion: boolean }) {
       </mesh>
 
       <mesh scale={1.012}>
-        <icosahedronGeometry args={[0.72, 4]} />
+        <icosahedronGeometry args={[0.72, lowPowerMode ? 2 : 4]} />
         <meshBasicMaterial
           blending={THREE.AdditiveBlending}
           color="#FFC85A"
@@ -331,7 +390,9 @@ function OrbitSun({ reducedMotion }: { reducedMotion: boolean }) {
       </mesh>
 
       <mesh ref={coronaRef} scale={1.26}>
-        <sphereGeometry args={[0.72, 40, 40]} />
+        <sphereGeometry
+          args={[0.72, lowPowerMode ? 20 : 40, lowPowerMode ? 20 : 40]}
+        />
         <meshBasicMaterial
           blending={THREE.AdditiveBlending}
           color="#FF941A"
@@ -354,6 +415,7 @@ function OrbitSun({ reducedMotion }: { reducedMotion: boolean }) {
 
 function OrbitInstrument({
   isDragging,
+  lowPowerMode,
   onRotate,
   onSelect,
   reducedMotion,
@@ -370,7 +432,7 @@ function OrbitInstrument({
       return;
     }
 
-    if (reducedMotion) {
+    if (reducedMotion || lowPowerMode) {
       instrumentRef.current.position.y = 0;
       instrumentRef.current.rotation.x = 0;
       instrumentRef.current.rotation.y = 0;
@@ -403,6 +465,7 @@ function OrbitInstrument({
     >
       <OrbitPlane
         isDragging={isDragging}
+        lowPowerMode={lowPowerMode}
         onRotate={onRotate}
         onSelect={onSelect}
         orbit="outer"
@@ -412,6 +475,7 @@ function OrbitInstrument({
       />
       <OrbitPlane
         isDragging={isDragging}
+        lowPowerMode={lowPowerMode}
         onRotate={onRotate}
         onSelect={onSelect}
         orbit="inner"
@@ -419,7 +483,10 @@ function OrbitInstrument({
         rotation={rotation}
         selectedId={selectedId}
       />
-      <OrbitSun reducedMotion={reducedMotion} />
+      <OrbitSun
+        lowPowerMode={lowPowerMode}
+        reducedMotion={reducedMotion}
+      />
     </group>
   );
 }
@@ -439,13 +506,20 @@ export function SkillsOrbitScene({
       camera={{ far: 40, fov: 43, near: 0.1, position: [0, 0, 8.2] }}
       className="skills-orbit-canvas"
       dpr={reducedMotion || lowPowerMode ? 1 : [1, 1.5]}
-      frameloop={reducedMotion || !isVisible ? "demand" : "always"}
+      frameloop={
+        reducedMotion || lowPowerMode || !isVisible ? "demand" : "always"
+      }
       gl={{
         alpha: true,
         antialias: !lowPowerMode,
         powerPreference: lowPowerMode ? "low-power" : "high-performance",
       }}
     >
+      <DemandFrameScheduler
+        enabled={reducedMotion || lowPowerMode}
+        rotation={rotation}
+        selectedId={selectedId}
+      />
       <ambientLight intensity={0.72} />
       <directionalLight
         color="#DCE5FF"
@@ -456,6 +530,7 @@ export function SkillsOrbitScene({
 
       <OrbitInstrument
         isDragging={isDragging}
+        lowPowerMode={lowPowerMode}
         onRotate={onRotate}
         onSelect={onSelect}
         reducedMotion={reducedMotion}

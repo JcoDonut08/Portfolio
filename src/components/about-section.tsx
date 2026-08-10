@@ -20,7 +20,11 @@ const aboutDetails = [
   },
 ] as const;
 
-export function AboutSection() {
+type AboutSectionProps = {
+  disableAmbientMotion: boolean;
+};
+
+export function AboutSection({ disableAmbientMotion }: AboutSectionProps) {
   return (
     <section aria-labelledby="about-title" className="about-section" id="about">
       <div aria-hidden="true" className="about-orbit about-orbit-primary" />
@@ -30,6 +34,7 @@ export function AboutSection() {
         <div className="about-card-stage" data-reveal="portrait">
           <div aria-hidden="true" className="about-card-glow" />
           <PortfolioCard
+            disableMotion={disableAmbientMotion}
             imageSrc="/assets/profile/jericho-paul-salvador-celestial.png"
             priority={false}
           />

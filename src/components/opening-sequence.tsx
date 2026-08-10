@@ -130,6 +130,7 @@ const signatureAccentStars = [
 
 type OpeningSequenceProps = {
   onComplete?: (preserveLocation?: boolean) => void;
+  skipForPerformance?: boolean;
 };
 
 function SignatureConstellation() {
@@ -251,7 +252,10 @@ function SignatureConstellation() {
   );
 }
 
-export function OpeningSequence({ onComplete }: OpeningSequenceProps) {
+export function OpeningSequence({
+  onComplete,
+  skipForPerformance = false,
+}: OpeningSequenceProps) {
   const [hasMounted, setHasMounted] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
@@ -264,7 +268,7 @@ export function OpeningSequence({ onComplete }: OpeningSequenceProps) {
   useEffect(() => {
     const shouldSkipSequence = consumeOpeningSequenceSkip();
 
-    if (shouldSkipSequence) {
+    if (shouldSkipSequence || skipForPerformance) {
       if (onCompleteRef.current) {
         onCompleteRef.current(true);
       } else {
@@ -306,7 +310,7 @@ export function OpeningSequence({ onComplete }: OpeningSequenceProps) {
       window.clearTimeout(exitTimer);
       window.clearTimeout(completeTimer);
     };
-  }, []);
+  }, [skipForPerformance]);
 
   if (isComplete) {
     return null;
