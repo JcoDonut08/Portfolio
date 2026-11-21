@@ -357,7 +357,7 @@ export function ContactInquiryForm({
       </div>
 
       <div className="contact-field">
-        <label htmlFor="contact-category">Project category</label>
+        <label htmlFor="contact-category">Reason for getting in touch</label>
         <select
           aria-describedby={fieldErrors.category ? "contact-category-error" : undefined}
           aria-errormessage={fieldErrors.category ? "contact-category-error" : undefined}
@@ -385,7 +385,7 @@ export function ContactInquiryForm({
       </div>
 
       <div className="contact-field">
-        <label htmlFor="contact-message">Project details</label>
+        <label htmlFor="contact-message">Your message</label>
         <textarea
           aria-describedby={fieldErrors.message ? "contact-message-error" : undefined}
           aria-errormessage={fieldErrors.message ? "contact-message-error" : undefined}
@@ -395,7 +395,7 @@ export function ContactInquiryForm({
           minLength={contactLimits.message.min}
           name="message"
           onChange={() => clearFieldError("message")}
-          placeholder="A quick outline of the idea, goals, or problem to solve…"
+          placeholder="Tell me about the role, your team, or a project you have in mind."
           required
           rows={4}
         />
@@ -485,9 +485,6 @@ export function ContactInquiryForm({
         type="submit"
       >
         {submitButtonLabels[submissionStatus]}
-        <span aria-hidden="true" className="contact-action-icon">
-          {submissionStatus === "success" ? "✓" : "↗"}
-        </span>
       </button>
 
       {submissionStatus === "error" ? (

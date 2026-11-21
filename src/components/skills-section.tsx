@@ -10,7 +10,6 @@ import {
 } from "react";
 
 import { skills, type SkillId } from "@/components/skills-data";
-import { WorkflowTools } from "@/components/workflow-tools";
 
 const SkillsOrbitScene = dynamic(
   () =>
@@ -191,7 +190,12 @@ export function SkillsSection({
         </div>
       </div>
 
-      <WorkflowTools disableMotion={lowPowerMode || prefersReducedMotion} />
+      <div aria-label="Skills by area" className="skill-groups">
+        <div><h3>Frontend</h3><p>React · Next.js · TypeScript · JavaScript · HTML · CSS · Tailwind CSS</p></div>
+        <div><h3>Backend &amp; data</h3><p>PHP · Laravel · Inertia.js · PostgreSQL · API integration</p></div>
+        <div><h3>Mobile &amp; creative</h3><p>React Native · Expo · Three.js · Motion</p></div>
+        <div><h3>Development workflow</h3><p>Git · GitHub · Figma · Playwright · Vercel</p></div>
+      </div>
     </section>
   );
 }

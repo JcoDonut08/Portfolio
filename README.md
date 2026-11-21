@@ -1,19 +1,23 @@
-# Jericho Salvador — Creative Developer Portfolio
+# Jericho Salvador — Frontend & Full-stack Portfolio
 
 [![Portfolio checks](https://github.com/JcoDonut08/Portfolio/actions/workflows/portfolio-checks.yml/badge.svg)](https://github.com/JcoDonut08/Portfolio/actions/workflows/portfolio-checks.yml)
 
-A cinematic, celestial-themed portfolio for Jericho Salvador, a creative developer focused on expressive interfaces, purposeful motion, and polished digital experiences.
+A celestial-themed internship portfolio for Jericho Salvador, a fourth-year Computer Science student building frontend and full-stack web applications.
 
-![Jericho Salvador portfolio homepage](./public/assets/projects/portfolio-homepage.png)
+Live portfolio: [jcoportfolio.vercel.app](https://jcoportfolio.vercel.app).
+
+![Jericho Salvador portfolio homepage](./docs/screenshots/portfolio-desktop.jpg)
 
 ## Highlights
 
 - Animated constellation signature opening sequence
-- Responsive project-first portfolio layout
+- Responsive project grid with directly accessible case-study pages
 - Active-section navigation for desktop and mobile
 - Interactive 3D technology orbit with keyboard support
 - Animated, reversible celestial identity card
-- Project previews with repository links
+- AgriFarm, GabayIskolar, Loveby Ade, and Saan Tayo? with supplied roles and repository links
+- Genuine repository interface images, published demo links, and explicit prototype scope
+- Project experience, grouped skills, and recruitment contact options
 - Accessible contact form with inline validation and clear status messages
 - Custom unavailable, not-found, and application error pages
 - Social-sharing metadata and a branded preview image
@@ -99,12 +103,13 @@ npm run test:e2e
 
 The Playwright suite verifies:
 
-- Opening-sequence handoff
+- Opening-sequence handoff, skip control, and immediate deep-link access
 - Project navigation and active-section state
 - Mobile navigation behavior
 - Accessible contact validation
 - Error-page return behavior
-- Horizontal overflow at phone, tablet, and desktop widths
+- Horizontal overflow from 320px phones through tablet and desktop widths
+- Shareable case-study navigation, all four project pages, and reduced-motion access
 
 Playwright starts a temporary development server during `npm run test:e2e`. To list the tests without starting a server, run:
 
@@ -112,7 +117,7 @@ Playwright starts a temporary development server during `npm run test:e2e`. To l
 npm run test:e2e:list
 ```
 
-Every push to `main` and every pull request runs dependency installation, linting, a production build, and all eight browser smoke tests through GitHub Actions.
+Every push to `main` and every pull request runs dependency installation, linting, a production build, and the browser suite through GitHub Actions.
 
 ## Deploying to Vercel
 
@@ -144,7 +149,8 @@ The zodiac field adapts astronomical geometry and Western constellation line con
 
 ## Author
 
-Jericho Salvador — Creative Developer
+Jericho Salvador — Web Developer, Frontend & Full-stack
 
 - [GitHub](https://github.com/JcoDonut08)
+- [LinkedIn](https://www.linkedin.com/in/jericho-salvador-986a89432/)
 - [Email](mailto:jerichosalvador08@gmail.com)

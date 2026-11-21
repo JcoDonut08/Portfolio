@@ -1,15 +1,8 @@
 "use client";
 
-import { useEffect, useState, type PointerEvent } from "react";
+import { type PointerEvent } from "react";
 import { PortfolioCard } from "@/components/portfolio-card";
 import { siteConfig } from "@/lib/site";
-
-const roles = [
-  "front-end developer",
-  "back-end developer",
-  "UI/UX designer",
-  "creative developer",
-];
 
 function GitHubIcon() {
   return (
@@ -44,25 +37,6 @@ export function HeroSection({
   disableAmbientMotion,
   isActive,
 }: HeroSectionProps) {
-  const [roleIndex, setRoleIndex] = useState(0);
-
-  useEffect(() => {
-    if (!isActive) {
-      return;
-    }
-
-    if (disableAmbientMotion) {
-      setRoleIndex(0);
-      return;
-    }
-
-    const timer = window.setTimeout(() => {
-      setRoleIndex((index) => (index + 1) % roles.length);
-    }, 2600);
-
-    return () => window.clearTimeout(timer);
-  }, [disableAmbientMotion, isActive, roleIndex]);
-
   const handleSignalPointerMove = (event: PointerEvent<HTMLElement>) => {
     if (disableAmbientMotion || event.pointerType !== "mouse") {
       return;
@@ -94,18 +68,17 @@ export function HeroSection({
           <h1>
             Jericho <span>Paul Salvador.</span>
           </h1>
-          <p className="hero-role" aria-label={`I am a ${roles[roleIndex]}`}>
-            I&apos;m a <span className="hero-role-mask"><span className="hero-role-word" key={roles[roleIndex]}>{roles[roleIndex]}</span></span>
-          </p>
+          <p className="hero-role">Web Developer <span>Frontend &amp; Full-stack</span></p>
           <p className="hero-summary">
-            I build clear, expressive digital experiences where interface craft and motion do the talking.
+            I&apos;m a fourth-year Computer Science student building responsive interfaces and full-stack web applications. Based in Pasig City and open to internship opportunities.
           </p>
+          <p className="hero-availability">Expected graduation · April 2027</p>
           <div className="hero-actions">
-            <a className="hero-action hero-action-primary" href="#contact">
-              Contact me <span aria-hidden="true">↓</span>
-            </a>
-            <a className="hero-action hero-action-secondary" href="#projects">
+            <a className="hero-action hero-action-primary" href="#projects">
               View projects
+            </a>
+            <a className="hero-action hero-action-secondary" download href="/assets/resume/Jericho-Salvador-Resume.pdf">
+              Download résumé
             </a>
           </div>
           <div aria-label="Social links" className="hero-social-links">
@@ -119,9 +92,11 @@ export function HeroSection({
               <GitHubIcon />
             </a>
             <a
-              aria-label="LinkedIn — temporarily unavailable"
-              className="hero-social-link is-pending"
-              href="/unavailable"
+              aria-label="LinkedIn"
+              className="hero-social-link"
+              href={siteConfig.linkedinUrl}
+              rel="noreferrer"
+              target="_blank"
             >
               <LinkedInIcon />
             </a>

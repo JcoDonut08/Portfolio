@@ -11,8 +11,8 @@ import "@/styles/skills.css";
 import "@/styles/projects.css";
 import "@/styles/contact.css";
 import "@/styles/responsive-refinements.css";
-import "@/styles/project-case-study.css";
 import "@/styles/system-pages.css";
+import "@/styles/hiring-refinements.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,13 +24,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const metadataTitle = "Jericho Salvador | Creative Developer";
+const metadataTitle = "Jericho Salvador | Frontend & Full-stack Web Developer";
 const metadataDescription =
-  "A cinematic creative developer portfolio built with Next.js, Motion, and Three.js.";
+  "Jericho Salvador's web and mobile projects, frontend and full-stack development experience, and internship portfolio. Based in Pasig City, Philippines.";
 const socialPreviewImage =
-  "/assets/social/jericho-salvador-social-preview.jpg";
+  "/opengraph-image";
 const socialPreviewAlt =
-  "JPSalvador constellation signature above Jericho Paul Salvador, Creative Developer";
+  "Jericho Paul Salvador — Web Developer, Frontend and Full-stack";
 
 function getMetadataBase() {
   const configuredUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
@@ -38,7 +38,7 @@ function getMetadataBase() {
   const url = configuredUrl || (vercelHost ? `https://${vercelHost}` : "");
 
   if (!url) {
-    return undefined;
+    return new URL("https://jcoportfolio.vercel.app");
   }
 
   try {
@@ -59,7 +59,9 @@ export const metadata: Metadata = {
   creator: "Jericho Salvador",
   keywords: [
     "Jericho Salvador",
-    "creative developer",
+    "web developer",
+    "full-stack developer",
+    "developer internship",
     "frontend developer",
     "UI/UX designer",
     "Next.js portfolio",
@@ -71,7 +73,7 @@ export const metadata: Metadata = {
       {
         alt: socialPreviewAlt,
         height: 630,
-        type: "image/jpeg",
+        type: "image/png",
         url: socialPreviewImage,
         width: 1200,
       },
@@ -110,6 +112,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <a className="skip-link" href="#main-content">Skip to content</a>
         {children}
       </body>
     </html>
