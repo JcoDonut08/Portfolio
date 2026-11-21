@@ -10,23 +10,24 @@ web
 
 ## Users
 
-The primary audience is clients and creative developers who want evidence of visual taste, frontend craft, and the ability to turn abstract ideas into polished interactive web experiences.
+The primary audience is recruiters and engineering managers considering Jericho for frontend or full-stack internships. Collaborators are a secondary audience.
 
 ## Product Purpose
 
-This portfolio exists to make Jericho feel memorable, capable, and easy to contact. Success means a visitor quickly understands the creative-developer positioning, sees credible work, and has a clear path to start a conversation.
+This portfolio introduces Jericho's web-development interests, makes his project roles and application scope easy to assess, and gives hiring teams a direct path to the résumé, source code, demonstrations, and contact details.
 
 ## Positioning
 
-Jericho builds cinematic, interactive web experiences where motion and interface craft make the work feel alive.
+Web Developer — Frontend & Full-stack. A fourth-year Computer Science student building responsive interfaces and connected applications, open to internship opportunities.
 
 ## Conversion & proof
 
-- Primary CTA: Contact me.
-- Secondary CTA: View work.
-- The line a visitor remembers after 10 seconds: Motion becomes proof.
-- Belief ladder: Jericho has taste; Jericho can build the visual idea; Jericho can present work clearly; Jericho is easy to contact.
-- Proof on hand: polished placeholder projects until real case studies, screenshots, and links are added.
+- Primary CTA: View projects.
+- Secondary CTA: Download résumé.
+- Proof: the supplied AgriFarm, GabayIskolar, Loveby Ade, and Saan Tayo? repositories, accurate project roles, case studies, and genuine interface images where available.
+- Clearly distinguish the whole application's capabilities from Jericho's documented personal responsibilities.
+- State prototype boundaries and link only demonstrations that have been checked.
+- Omit unconfirmed graduation dates, availability dates, usage metrics, and module ownership from public copy.
 
 ## Brand Personality
 
@@ -34,7 +35,7 @@ Cinematic, precise, electric. The interface should feel like a dark studio where
 
 ## Anti-references
 
-Avoid generic cream portfolio templates, busy animation everywhere, terminal cosplay, identical card grids, gradient text, and click-to-enter gates that slow visitors down.
+Avoid generic cream templates, busy animation, terminal cosplay, and effects that hide project details or delay reading.
 
 ## Design Principles
 
@@ -42,7 +43,7 @@ Avoid generic cream portfolio templates, busy animation everywhere, terminal cos
 - Let motion clarify hierarchy and mood instead of decorating every section.
 - Treat the hero as an interactive signal, not a static banner.
 - Keep contact obvious even while the design feels cinematic.
-- Use placeholders that are polished enough to replace later without changing the layout.
+- Use actual project evidence; use typographic title panels when no interface capture is available.
 
 ## Accessibility & Inclusion
 

@@ -90,13 +90,13 @@ export function PortfolioExperience() {
         <CursorConstellation
           isActive={hasEntered && !disableAmbientMotion}
         />
-        <main>
+        <main id="main-content">
           <HeroSection
             disableAmbientMotion={disableAmbientMotion}
             isActive={hasEntered}
           />
           <ProjectsSection />
-          <AboutSection disableAmbientMotion={disableAmbientMotion} />
+          <AboutSection />
           <SkillsSection
             lowPowerMode={lowPowerMode}
             prefersReducedMotion={prefersReducedMotion}

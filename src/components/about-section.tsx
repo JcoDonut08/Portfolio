@@ -1,98 +1,21 @@
-import type { CSSProperties } from "react";
-import { PortfolioCard } from "@/components/portfolio-card";
+import Link from "next/link";
 
-const aboutDetails = [
-  {
-    label: "Education",
-    value: "BS Computer Science",
-  },
-  {
-    label: "Year Level",
-    value: "Fourth Year",
-  },
-  {
-    label: "Location",
-    value: "Pasig City, Philippines",
-  },
-  {
-    label: "Focus",
-    value: "Frontend Development & UI/UX",
-  },
-] as const;
+const experience = [
+  { title: "AgriFarm", role: "Full-stack development", context: "Laravel, React, and Inertia", description: "A local marketplace connecting the customer journey with seller tools and server-side application rules.", slug: "agrifarm" },
+  { title: "GabayIskolar", role: "Frontend development", context: "The Prompters · OVERCLOCK 2026", description: "A team hackathon prototype that makes scholarship preparation easier to navigate.", slug: "gabayiskolar" },
+  { title: "Loveby Ade", role: "Team leadership & full-stack development", context: "Academic team project", description: "Development, interface design, and quality assurance in a three-person e-commerce team.", slug: "loveby-ade" },
+];
 
-type AboutSectionProps = {
-  disableAmbientMotion: boolean;
-};
-
-export function AboutSection({ disableAmbientMotion }: AboutSectionProps) {
+export function AboutSection() {
   return (
-    <section aria-labelledby="about-title" className="about-section" id="about">
-      <div aria-hidden="true" className="about-orbit about-orbit-primary" />
-      <div aria-hidden="true" className="about-orbit about-orbit-secondary" />
-
-      <div className="about-shell">
-        <div className="about-card-stage" data-reveal="portrait">
-          <div aria-hidden="true" className="about-card-glow" />
-          <PortfolioCard
-            disableMotion={disableAmbientMotion}
-            imageSrc="/assets/profile/jericho-paul-salvador-celestial.png"
-            priority={false}
-          />
-        </div>
-
-        <div className="about-content">
-          <p className="about-eyebrow" data-reveal="signal">
-            <span aria-hidden="true" />
-            A little about me
-          </p>
-
-          <h2 data-reveal="title" id="about-title">
-            I create
-            <span>with purpose.</span>
-          </h2>
-
-          <div className="about-copy" data-reveal="copy">
-            <p>
-              I&apos;m Jericho Salvador, a fourth-year Computer Science student from Pasig
-              City with an interest in frontend development and UI/UX design. I enjoy
-              transforming ideas into digital experiences that are functional, visually
-              engaging, and easy to use.
-            </p>
-            <p>
-              I&apos;m continuously developing my skills through academic projects and
-              personal experimentation. Whether I&apos;m designing an interface or building a
-              working system, I approach every project as an opportunity to learn, solve
-              problems, and create something meaningful.
-            </p>
-          </div>
-
-          <dl className="about-details">
-            {aboutDetails.map((detail, index) => (
-              <div
-                className="about-detail-card"
-                data-reveal="detail"
-                key={detail.label}
-                style={{ "--reveal-index": index } as CSSProperties}
-              >
-                <span aria-hidden="true" className="about-detail-index">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <dt>{detail.label}</dt>
-                <dd>{detail.value}</dd>
-              </div>
-            ))}
-          </dl>
-
-          <a
-            className="about-resume-link"
-            download
-            href="/assets/resume/Jericho-Salvador-Resume.pdf"
-          >
-            Download résumé
-            <span aria-hidden="true">↓</span>
-          </a>
-        </div>
+    <section aria-labelledby="about-title" className="profile-section" id="about">
+      <div className="profile-copy"><p className="section-kicker">A little about me</p><h2 id="about-title">Thoughtful interfaces.<br/><span>Connected systems.</span></h2>
+        <p>I&apos;m Jericho Salvador, a fourth-year Computer Science student at Pamantasan ng Lungsod ng Pasig. I enjoy both shaping the interface people use and connecting it to the logic that makes an application work.</p>
+        <p>My projects span a Laravel and React marketplace, a scholarship preparation interface, a dessert storefront, and a mobile discovery prototype. I&apos;m looking for an internship where I can contribute, learn from a development team, and keep building across the web stack.</p>
+        <dl className="profile-facts"><div><dt>Based in</dt><dd>Pasig City, Philippines</dd></div><div><dt>Degree</dt><dd>BS Computer Science · Fourth year</dd></div><div><dt>Graduation</dt><dd>Expected April 2027</dd></div><div><dt>Interested in</dt><dd>Frontend &amp; full-stack internships</dd></div></dl>
+        <a className="text-link" download href="/assets/resume/Jericho-Salvador-Resume.pdf">Download my résumé</a>
       </div>
+      <div className="experience-list"><p className="section-kicker">Project experience</p>{experience.map((item) => <article key={item.slug}><p className="experience-role">{item.role}</p><h3><Link href={`/projects/${item.slug}`}>{item.title}</Link></h3><p className="experience-context">{item.context}</p><p>{item.description}</p></article>)}</div>
     </section>
   );
 }

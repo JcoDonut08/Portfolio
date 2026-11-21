@@ -3,7 +3,7 @@ import type { CSSProperties } from "react";
 const educationMilestones = [
   {
     school: "Pamantasan ng Lungsod ng Pasig",
-    program: "Bachelor of Science in Computer Science",
+    program: "Bachelor of Science in Computer Science · Expected April 2027",
     period: "2023–Present",
     distinction: "Dean’s Lister",
   },
@@ -12,17 +12,6 @@ const educationMilestones = [
     program: "Senior High School",
     period: "2021–2023",
     distinction: "Graduated with High Honors",
-  },
-  {
-    school: "ADT Montessori School",
-    program: "Junior High School",
-    period: "2017–2021",
-    distinction: "Graduated with Honors",
-  },
-  {
-    school: "San Lorenzo Ruiz Elementary School",
-    program: "Elementary Education",
-    period: "2011–2017",
   },
 ] as const;
 
@@ -36,8 +25,8 @@ export function EducationSection() {
       <header className="education-heading" data-reveal="education-heading">
         <p>Education</p>
         <h2 id="education-title">
-          <span className="education-title-primary">My academic journey</span>
-          <span className="education-title-secondary">and milestones</span>
+          <span className="education-title-primary">A foundation</span>
+          <span className="education-title-secondary">for the work ahead.</span>
         </h2>
       </header>
 

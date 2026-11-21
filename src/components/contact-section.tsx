@@ -97,8 +97,7 @@ export function ContactSection() {
             </span>
           </h2>
           <p className="contact-summary">
-            Have a project, collaboration, or interface problem in mind? Send
-            the starting point and let&apos;s shape what it could become.
+            Hiring an intern or building something useful? I&apos;m open to frontend and full-stack opportunities, team projects, and conversations about the work.
           </p>
         </div>
 
@@ -110,10 +109,7 @@ export function ContactSection() {
               className="contact-secondary-action"
               href={`mailto:${siteConfig.email}`}
             >
-              Email directly
-              <span aria-hidden="true" className="contact-action-icon">
-                ↗
-              </span>
+              {siteConfig.email}
             </a>
             <a
               className="contact-secondary-action"
@@ -122,10 +118,8 @@ export function ContactSection() {
               target="_blank"
             >
               View GitHub
-              <span aria-hidden="true" className="contact-action-icon">
-                ↗
-              </span>
             </a>
+            <a className="contact-secondary-action" href={siteConfig.linkedinUrl} rel="noreferrer" target="_blank">Connect on LinkedIn</a>
           </div>
 
           <dl className="contact-details">
@@ -135,7 +129,7 @@ export function ContactSection() {
             </div>
             <div>
               <dt>Focus</dt>
-              <dd>Frontend · UI/UX · Creative development</dd>
+              <dd>Frontend &amp; full-stack web development</dd>
             </div>
           </dl>
         </div>

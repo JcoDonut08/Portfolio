@@ -268,7 +268,7 @@ export function OpeningSequence({
   useEffect(() => {
     const shouldSkipSequence = consumeOpeningSequenceSkip();
 
-    if (shouldSkipSequence || skipForPerformance) {
+    if (shouldSkipSequence || skipForPerformance || window.location.hash) {
       if (onCompleteRef.current) {
         onCompleteRef.current(true);
       } else {
@@ -329,6 +329,7 @@ export function OpeningSequence({
       <div aria-hidden="true" className="splash-signature-stage">
         <SignatureConstellation />
       </div>
+      <button className="splash-skip" onClick={() => onCompleteRef.current?.(true)} type="button">Skip intro</button>
     </div>
   );
 }

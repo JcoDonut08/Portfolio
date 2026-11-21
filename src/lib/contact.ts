@@ -1,4 +1,5 @@
 export const contactCategories = [
+  "Internship / recruitment",
   "Website development",
   "UI/UX design",
   "Portfolio or personal site",
@@ -75,7 +76,7 @@ export function validateContactSubmission(
     return {
       success: false,
       errors: {
-        message: "Enter your project details before sending.",
+        message: "Enter your message before sending.",
       },
     };
   }
@@ -102,14 +103,14 @@ export function validateContactSubmission(
   }
 
   if (!isContactCategory(category)) {
-    errors.category = "Select a project category.";
+    errors.category = "Select a reason for getting in touch.";
   }
 
   if (
     message.length < contactLimits.message.min ||
     message.length > contactLimits.message.max
   ) {
-    errors.message = `Use between ${contactLimits.message.min} and ${contactLimits.message.max} characters for the project details.`;
+    errors.message = `Use between ${contactLimits.message.min} and ${contactLimits.message.max} characters for your message.`;
   }
 
   if (Object.keys(errors).length > 0) {
